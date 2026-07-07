@@ -104,9 +104,8 @@ pm2 set pm2-logrotate:rotateInterval "0 0 * * *"
 ## 10. Nginx
 
 ```bash
-sudo cp deploy/nginx.conf /etc/nginx/sites-available/oltinoy
-sudo nano /etc/nginx/sites-available/oltinoy   # server_name'ni real domenga moslang
-sudo ln -s /etc/nginx/sites-available/oltinoy /etc/nginx/sites-enabled/
+sudo cp deploy/nginx.conf /etc/nginx/sites-available/oltinoycollection.uz
+sudo ln -s /etc/nginx/sites-available/oltinoycollection.uz /etc/nginx/sites-enabled/
 sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl reload nginx
@@ -116,8 +115,18 @@ sudo systemctl reload nginx
 
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d oltinoycollection.uz -d www.oltinoycollection.uz
+sudo certbot --nginx --redirect -d oltinoycollection.uz -d www.oltinoycollection.uz
 sudo systemctl status certbot.timer   # avto-yangilanish yoqilganini tekshirish
+```
+
+Certbot HTTP blokka `listen 443 ssl` + sertifikat yo'llarini qo'shadi va HTTP→HTTPS
+redirectni avtomatik sozlaydi. **Oldindan shart:** `oltinoycollection.uz` va
+`www.oltinoycollection.uz` uchun DNS **A record** server IP'ga yo'naltirilgan bo'lishi kerak,
+aks holda certbot domenni tasdiqlay olmaydi.
+
+```bash
+# tekshirish (ixtiyoriy):
+dig +short oltinoycollection.uz   # server IP chiqishi kerak
 ```
 
 ## 12. Backup cron
