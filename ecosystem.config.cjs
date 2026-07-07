@@ -4,7 +4,7 @@ module.exports = {
       name: "oltinoy-web",
       cwd: "/var/www/oltinoy",
       script: "node_modules/next/dist/bin/next",
-      args: "start -p 3000",
+      args: "start -p 11000",
       env: { NODE_ENV: "production" },
       max_memory_restart: "450M",
       time: true,

@@ -4,7 +4,7 @@
 set -euo pipefail
 
 APP_DIR="/var/www/oltinoy"
-DOMAIN="${DOMAIN:-oltinoy.uz}"
+DOMAIN="${DOMAIN:-oltinoycollection.uz}"
 
 cd "$APP_DIR"
 

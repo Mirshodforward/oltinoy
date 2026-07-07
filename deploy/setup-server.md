@@ -116,7 +116,7 @@ sudo systemctl reload nginx
 
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d oltinoy.uz -d www.oltinoy.uz
+sudo certbot --nginx -d oltinoycollection.uz -d www.oltinoycollection.uz
 sudo systemctl status certbot.timer   # avto-yangilanish yoqilganini tekshirish
 ```
 
@@ -135,7 +135,7 @@ crontab -e
 
 ```bash
 pm2 status                    # oltinoy-web va oltinoy-bot "online" bo'lishi kerak
-curl -I https://oltinoy.uz/   # 200 OK
+curl -I https://oltinoycollection.uz/   # 200 OK
 pm2 logs oltinoy-bot --lines 20   # bot @username bilan ishga tushganini ko'ring
 ```
 

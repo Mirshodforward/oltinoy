@@ -19,7 +19,7 @@ export async function handleStart(ctx: Context) {
   });
 
   const settings = await getSettings();
-  const siteUrl = process.env.SITE_URL ?? "https://oltinoy.uz";
+  const siteUrl = process.env.SITE_URL ?? "https://oltinoycollection.uz";
 
   const text =
     `Assalomu alaykum, ${from.first_name ?? "mehmon"}! 👋\n\n` +
