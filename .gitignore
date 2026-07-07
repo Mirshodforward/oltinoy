@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# uploads (dev writes here; prod uses /var/www/oltinoy/uploads)
+/public/uploads/
+/uploads/
+/dist/

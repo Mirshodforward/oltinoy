@@ -20,6 +20,13 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      // Uzbek copy relies on literal apostrophes (o', g', ta'sir); escaping
+      // every one as &apos; would make the source unreadable.
+      "react/no-unescaped-entities": "off",
+    },
+  },
 ];
 
 export default eslintConfig;

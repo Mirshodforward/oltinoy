@@ -1,26 +1,261 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  Oltinoy Collection design system.
+  Palette derived from the brand: ink-navy, warm ivory (fabric), oltin/gold,
+  muted bronze, deep sage. Light theme. Signature = fine dashed gold "seam" rule.
+*/
+@theme {
+  /* Brand palette */
+  --color-ink: #14161f; /* ink-navy — header/footer, primary text */
+  --color-ink-soft: #2a2d3a;
+  --color-ivory: #f7f3ec; /* warm ivory — page background */
+  --color-ivory-deep: #efe8dc;
+  --color-gold: #c9a227; /* oltin/gold — logo, price, active states (sparingly) */
+  --color-gold-soft: #d8b959;
+  --color-bronze: #8a6f4d; /* muted bronze — secondary */
+  --color-sage: #2e5e4e; /* deep sage — success states */
+  --color-sage-soft: #3d7a64;
+
+  --color-background: var(--color-ivory);
+  --color-foreground: var(--color-ink);
+  --color-muted: #6b6558;
+  --color-line: #e2d9c9;
+
+  /* Fonts (wired via CSS variables from next/font/local) */
+  --font-display: var(--font-display), Georgia, serif;
+  --font-body: var(--font-body), system-ui, sans-serif;
+
+  --radius-card: 0.75rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+
+  /* Visible keyboard focus — accessibility requirement. */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Signature: fine dashed gold "seam" — the one flourish (echoes the workshop). */
+  .seam {
+    height: 1px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-gold) 0,
+      var(--color-gold) 6px,
+      transparent 6px,
+      transparent 12px
+    );
+    opacity: 0.55;
+  }
+
+  .seam-active {
+    height: 2px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-gold) 0,
+      var(--color-gold) 5px,
+      transparent 5px,
+      transparent 10px
+    );
+  }
+
+  /* Price is set in the display face — "price is the product" in optom. */
+  .price {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .container-page {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px; /* tap target */
+    padding: 0.625rem 1.25rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      border-color 0.15s ease,
+      transform 0.1s ease;
+    cursor: pointer;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn-primary {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+  .btn-primary:hover {
+    background: var(--color-ink-soft);
+  }
+  .btn-gold {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+  .btn-gold:hover {
+    background: var(--color-gold-soft);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--color-ink);
+    border: 1px solid var(--color-ink);
+  }
+  .btn-outline:hover {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .badge-new {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+  .badge-sold {
+    background: var(--color-ink);
+    color: var(--color-ivory);
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-bottom: 0.35rem;
+  }
+  .field-input {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.6rem 0.85rem;
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    transition: border-color 0.15s ease;
+  }
+  .field-input:focus {
+    border-color: var(--color-gold);
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(201 162 39 / 0.15);
+  }
+
+  /* Rendered markdown (blog / about) */
+  .prose-oltinoy h2 {
+    font-size: 1.4rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .prose-oltinoy h3 {
+    font-size: 1.15rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.4rem;
+  }
+  .prose-oltinoy p {
+    margin-bottom: 0.9rem;
+  }
+  .prose-oltinoy ul,
+  .prose-oltinoy ol {
+    margin: 0.75rem 0 1rem 1.25rem;
+    list-style: revert;
+  }
+  .prose-oltinoy li {
+    margin-bottom: 0.35rem;
+  }
+  .prose-oltinoy a {
+    color: var(--color-bronze);
+    text-decoration: underline;
+  }
+  .prose-oltinoy blockquote {
+    border-left: 3px solid var(--color-gold);
+    padding-left: 1rem;
+    font-style: italic;
+    color: var(--color-muted);
+    margin: 1rem 0;
+  }
+  .prose-oltinoy img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+  }
 }
