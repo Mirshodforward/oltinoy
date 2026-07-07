@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "oltinoy-web",
+      name: "oltinoy",
       cwd: "/var/www/oltinoy",
       script: "node_modules/next/dist/bin/next",
       args: "start -p 11000",
