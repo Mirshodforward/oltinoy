@@ -10,6 +10,8 @@ const serverSchema = z.object({
   BOT_TOKEN: z.string().min(1),
   ADMIN_CHAT_ID: z.string().min(1),
   CHANNEL_ID: z.string().min(1),
+  // Optional shared secret for the /api/telegram webhook (recommended in prod).
+  TELEGRAM_WEBHOOK_SECRET: z.string().optional().default(""),
   AUTH_SECRET: z.string().min(16),
   ADMIN_USERNAME: z.string().min(1),
   ADMIN_INITIAL_PASSWORD: z.string().min(6),

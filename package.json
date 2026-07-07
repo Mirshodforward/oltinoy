@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && next build && npm run build:bot",
+    "build": "prisma generate && next build",
     "build:bot": "tsup",
     "start": "next start -p 11000",
     "start:bot": "node dist/bot/index.js",
     "dev:bot": "tsx watch src/bot/index.ts",
+    "bot:webhook": "node --env-file=.env scripts/set-webhook.mjs",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "db:migrate": "prisma migrate deploy",

@@ -48,7 +48,7 @@ Keyingi har bir yangilanish uchun, `deploy` foydalanuvchisi sifatida `/var/www/o
 ./deploy/deploy.sh
 ```
 
-Bu skript: `git pull` → `npm ci` → `prisma migrate deploy` → `npm run build` (Next.js + bot bundle) → `pm2 reload` → health-check qiladi.
+Bu skript: `git pull` → `npm ci` → `prisma migrate deploy` → `npm run build` (Next.js) → `pm2 reload` → health-check qiladi. Bot webhook orqali web ichida ishlagani uchun alohida qadam kerak emas (webhook faqat domen/token o'zgarganda `npm run bot:webhook` bilan qayta o'rnatiladi).
 
 ### Rollback
 
@@ -112,4 +112,4 @@ const db = new PrismaClient();
 - **PM2 loglar** — `pm2-logrotate` majburiy o'rnatilgan bo'lishi kerak (o'tgan hodisa: rotatsiyasiz loglar diskni to'ldirgan). `setup-server.md` §9 ga qarang.
 - **Slug'lar** — mahsulot/post e'lon qilingandan keyin slug o'zgartirilmasin (SEO). Admin forma buni ogohlantiradi.
 - **Rasm pipeline** — sharp orqali `lg`/`md`/`sm` variantlar avtomatik generatsiya qilinadi (`src/lib/images-server.ts`). Runtime'da qayta optimallashtirish yo'q — droplet CPU tejaladi.
-- **Ikkita jarayon** — web (`oltinoy-web`) faqat outbound Telegram xabar yuboradi; inbound update'lar (callback, /start) alohida `oltinoy-bot` jarayonida (long polling).
+- **Bitta jarayon (webhook)** — web (`oltinoy`) ham saytni beradi, ham Telegram update'larini (`/start`, callback) `POST /api/telegram` orqali qabul qiladi. Alohida bot jarayoni yo'q. Lokal dev'da esa polling ishlatiladi (`npm run dev:bot`, [src/bot/index.ts](src/bot/index.ts)).

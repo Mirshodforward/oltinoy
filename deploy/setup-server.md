@@ -129,7 +129,21 @@ aks holda certbot domenni tasdiqlay olmaydi.
 dig +short oltinoycollection.uz   # server IP chiqishi kerak
 ```
 
-## 12. Backup cron
+## 12. Telegram webhook (bot)
+
+Bot alohida jarayon emas — u web ichida `POST /api/telegram` orqali ishlaydi
+(webhook rejimi). SSL ishga tushgach, webhook'ni bir marta ro'yxatdan o'tkazing:
+
+```bash
+cd /var/www/oltinoy
+npm run bot:webhook          # SITE_URL/api/telegram ni Telegram'ga o'rnatadi
+```
+
+`.env` da `TELEGRAM_WEBHOOK_SECRET` to'ldirilgan bo'lsa (tavsiya etiladi:
+`openssl rand -hex 16`), endpoint faqat Telegram'dan kelgan so'rovlarni qabul qiladi.
+Kod yangilanganda webhook o'zgarmaydi — uni faqat domen yoki bot tokeni o'zgarganda qayta o'rnatasiz.
+
+## 13. Backup cron
 
 ```bash
 chmod +x deploy/backup.sh deploy/deploy.sh
@@ -140,14 +154,14 @@ crontab -e
 # 0 3 * * * /var/www/oltinoy/deploy/backup.sh >> /var/log/oltinoy-backup.log 2>&1
 ```
 
-## 13. Tekshirish
+## 14. Tekshirish
 
 ```bash
-pm2 status                    # oltinoy-web va oltinoy-bot "online" bo'lishi kerak
+pm2 status                    # bitta "oltinoy" jarayoni "online" bo'lishi kerak
 curl -I https://oltinoycollection.uz/   # 200 OK
-pm2 logs oltinoy-bot --lines 20   # bot @username bilan ishga tushganini ko'ring
+pm2 logs oltinoy --lines 20   # web + webhook loglari
 ```
 
-Botga Telegram'da `/start` yuboring — javob kelishi kerak. Saytdan bron qoldirib, admin chatga xabar kelishini tekshiring.
+Botga Telegram'da `/start` yuboring — javob kelishi kerak (webhook orqali). Saytdan bron qoldirib, admin chatga xabar kelishini tekshiring.
 
 Shu bilan birinchi marta o'rnatish yakunlanadi. Keyingi yangilanishlar uchun [../README.md](../README.md) dagi "Deploy" bo'limiga qarang.

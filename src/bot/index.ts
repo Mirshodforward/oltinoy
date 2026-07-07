@@ -1,48 +1,12 @@
-import { Bot } from "grammy";
-import { BOT_TOKEN } from "./config";
-import { handleStart, handleStop } from "./handlers/start";
-import { handleBookingCallback } from "./handlers/callbacks";
-import { handleStats } from "./handlers/adminCommands";
+import { createBot } from "./bot";
 import { db } from "@/lib/db";
 
-const bot = new Bot(BOT_TOKEN);
-
-// Never crash on a bad update.
-bot.catch((err) => {
-  console.error("[bot] error handling update:", err.error);
-});
-
-bot.command("start", async (ctx) => {
-  try {
-    await handleStart(ctx);
-  } catch (err) {
-    console.error("[bot] /start failed:", err);
-  }
-});
-
-bot.command("stop", async (ctx) => {
-  try {
-    await handleStop(ctx);
-  } catch (err) {
-    console.error("[bot] /stop failed:", err);
-  }
-});
-
-bot.command("stats", async (ctx) => {
-  try {
-    await handleStats(ctx);
-  } catch (err) {
-    console.error("[bot] /stats failed:", err);
-  }
-});
-
-bot.callbackQuery(/^bk:\d+:[ctxd]$/, async (ctx) => {
-  try {
-    await handleBookingCallback(ctx);
-  } catch (err) {
-    console.error("[bot] callback failed:", err);
-  }
-});
+// Standalone long-polling entry — for LOCAL DEV only (`npm run dev:bot`).
+// Production uses the webhook route (src/app/api/telegram/route.ts), so this
+// process is not started on the server. Note: a bot can't poll while a webhook
+// is set (Telegram 409) — run `node --env-file=.env -e "..."` deleteWebhook first
+// if you switch a real token back to polling.
+const bot = createBot();
 
 async function shutdown(signal: string) {
   console.log(`[bot] received ${signal}, shutting down…`);
