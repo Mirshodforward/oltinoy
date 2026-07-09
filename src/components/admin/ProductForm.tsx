@@ -141,7 +141,14 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
         setError(res.error);
         return;
       }
-      if (thenPost) {
+
+      if (res.channelPosted) {
+        setNotice("Mahsulot saqlandi va kanalga joylandi ✅");
+      } else if (res.channelError) {
+        setNotice(`Saqlandi, lekin kanalga joylanmadi: ${res.channelError}`);
+      }
+
+      if (thenPost && !res.channelPosted) {
         setPosting(true);
         const pr = await postProductChannel(res.id, false);
         setPosting(false);
@@ -151,8 +158,10 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
           router.refresh();
           return;
         }
+        setNotice("Mahsulot saqlandi va kanalga joylandi ✅");
       }
-      router.push("/admin/mahsulotlar");
+
+      router.push(isEdit ? `/admin/mahsulotlar/${res.id}` : "/admin/mahsulotlar");
       router.refresh();
     } catch (e) {
       setError(e instanceof Error && e.message === "UNAUTHORIZED" ? "Sessiya tugagan" : "Saqlashda xatolik");
@@ -306,12 +315,12 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
       {/* Actions */}
       <div className="flex flex-wrap gap-3 border-t pt-5" style={{ borderColor: "var(--color-line)" }}>
         <button type="button" onClick={() => submit(false)} disabled={saving} className="btn btn-primary">
-          {saving && !posting ? "Saqlanmoqda…" : "Saqlash"}
+          {saving && !posting ? "Saqlanmoqda…" : isEdit ? "Saqlash" : "Saqlash (kanalga avtomatik 📣)"}
         </button>
-        {!isEdit && (
-          <button type="button" onClick={() => submit(true)} disabled={saving} className="btn btn-gold">
-            {posting ? "Joylanmoqda…" : "Saqlash va kanalga joylash 📣"}
-          </button>
+        {!isEdit && images.length === 0 && (
+          <p className="self-center text-xs" style={{ color: "var(--color-muted)" }}>
+            Kanalga joylash uchun kamida 1 ta rasm qo&apos;shing
+          </p>
         )}
         {isEdit && !alreadyPosted && (
           <button type="button" onClick={() => submit(true)} disabled={saving} className="btn btn-gold" title="Kanalga birinchi marta joylash">

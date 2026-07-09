@@ -17,10 +17,24 @@ const url = `${site}/api/telegram`;
 const bot = new Bot(token);
 
 await bot.api.setWebhook(url, { secret_token: secret, drop_pending_updates: true });
+
+let hostname = "oltinoycollection.uz";
+try {
+  hostname = new URL(site).hostname.replace(/^www\./, "");
+} catch {
+  /* keep default */
+}
+
+// Global menu button → public site (non-admins). Admins open /admin via /start inline button.
+await bot.api.setChatMenuButton({
+  menu_button: { type: "web_app", text: hostname, web_app: { url: site } },
+});
+
 const info = await bot.api.getWebhookInfo();
 
 console.log("✅ Webhook o'rnatildi");
 console.log("   url:            ", info.url);
+console.log("   menu button:    ", hostname, "→", site);
 console.log("   secret himoya:  ", secret ? "yoqilgan" : "yo'q (TELEGRAM_WEBHOOK_SECRET bo'sh)");
 console.log("   pending updates:", info.pending_update_count);
 if (info.last_error_message) {

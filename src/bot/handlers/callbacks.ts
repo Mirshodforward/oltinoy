@@ -1,14 +1,19 @@
 import type { Context } from "grammy";
 import { CODE_TO_STATUS, STATUS_LABEL, applyBookingStatus } from "@/lib/booking-status";
-import { isAdminChat } from "../config";
+import { canManageBookings } from "@/lib/admin-telegram";
 
 /** Handle inline status buttons on booking alerts (admin chat only). */
 export async function handleBookingCallback(ctx: Context) {
   const data = ctx.callbackQuery?.data;
-  const chatId = ctx.callbackQuery?.message?.chat.id;
+  const message = ctx.callbackQuery?.message;
 
-  // Only members of the admin chat may act.
-  if (!isAdminChat(chatId)) {
+  if (
+    !canManageBookings({
+      chatId: message?.chat.id,
+      userId: ctx.from?.id,
+      chatType: message?.chat.type,
+    })
+  ) {
     await ctx.answerCallbackQuery({ text: "Ruxsat yo'q.", show_alert: true }).catch(() => {});
     return;
   }

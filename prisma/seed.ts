@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { slugify } from "../src/lib/slug";
+import { POSTS_SEO_20 } from "./posts-seo-20";
+import { POSTS_SEO_20_REST } from "./posts-seo-20-rest";
 
 const db = new PrismaClient();
 
@@ -101,9 +103,8 @@ const PRODUCTS: {
 ];
 
 /**
- * 10 fully-written articles from the content plan (maqolalar-1-10.md), staggered
- * publishedAt dates matching the recommended weekly cadence so the blog archive
- * reads naturally rather than "50 posts published in one day".
+ * Blog posts: 10 wholesale/reseller articles (maqolalar-1-10.md) plus 20 retail SEO
+ * articles (posts-seo-20*.ts). Staggered publishedAt dates keep the archive natural.
  */
 const POSTS: {
   slug: string;
@@ -929,6 +930,8 @@ Yo'q, lekin ulushini kamaytiring: qishda zichroq matolar (PRADO tipidagi) va ast
 
 *Наша осенне-зимняя коллекция обновляется каждую неделю — чтобы первыми увидеть и забронировать новые модели: [каталог](/ru/katalog). Вопросы: [контакты](/ru/aloqa).*`,
   },
+  ...POSTS_SEO_20,
+  ...POSTS_SEO_20_REST,
 ];
 
 async function main() {

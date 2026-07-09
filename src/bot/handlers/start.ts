@@ -1,8 +1,13 @@
 import type { Context } from "grammy";
 import { db } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
+import { isAdminTelegramUser, siteHostname } from "@/lib/admin-telegram";
 
-/** /start — upsert subscriber + greeting with catalog/channel buttons. */
+function siteUrl(): string {
+  return (process.env.SITE_URL ?? "https://oltinoycollection.uz").replace(/\/$/, "");
+}
+
+/** /start — upsert subscriber; admins get panel buttons, others get site link. */
 export async function handleStart(ctx: Context) {
   const from = ctx.from;
   if (!from) return;
@@ -18,9 +23,28 @@ export async function handleStart(ctx: Context) {
     update: { isActive: true, firstName: from.first_name ?? null, username: from.username ?? null },
   });
 
-  const settings = await getSettings();
-  const siteUrl = process.env.SITE_URL ?? "https://oltinoycollection.uz";
+  const url = siteUrl();
+  const hostname = siteHostname();
 
+  if (isAdminTelegramUser(from.id)) {
+    const text =
+      `Assalomu alaykum, ${from.first_name ?? "admin"}! 👋\n\n` +
+      `<b>Admin panelga xush kelibsiz.</b>\n\n` +
+      `Bronlar, mahsulotlar va statistikani shu yerdan boshqarasiz.`;
+
+    await ctx.reply(text, {
+      parse_mode: "HTML",
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "🛠 Admin panel", web_app: { url: `${url}/admin` } }],
+          [{ text: "📊 Statistika", callback_data: "admin:stats" }],
+        ],
+      },
+    });
+    return;
+  }
+
+  const settings = await getSettings();
   const text =
     `Assalomu alaykum, ${from.first_name ?? "mehmon"}! 👋\n\n` +
     `<b>Oltinoy Collection</b> botiga xush kelibsiz.\n\n` +
@@ -32,7 +56,7 @@ export async function handleStart(ctx: Context) {
     parse_mode: "HTML",
     reply_markup: {
       inline_keyboard: [
-        [{ text: "🛍 Katalog", url: `${siteUrl}/katalog` }],
+        [{ text: `🌐 ${hostname}`, url }],
         ...(settings.tgChannelUrl ? [[{ text: "✈️ Kanal", url: settings.tgChannelUrl }]] : []),
       ],
     },

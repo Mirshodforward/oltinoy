@@ -20,8 +20,57 @@ function revalidateProducts(slug?: string) {
 
 export type ProductActionState = { error?: string; ok?: boolean };
 
+/** Load product + settings and post to Telegram channel. */
+async function publishProductToChannel(
+  id: number,
+  force: boolean,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const product = await db.product.findUnique({
+    where: { id },
+    include: {
+      images: { orderBy: { sortOrder: "asc" } },
+      category: { select: { nameUz: true } },
+    },
+  });
+  if (!product) return { ok: false, error: "Mahsulot topilmadi" };
+  if (product.tgMessageIds.length > 0 && !force) {
+    return { ok: false, error: "Allaqachon kanalga joylangan" };
+  }
+  if (product.images.length === 0) {
+    return { ok: false, error: "Kamida bitta rasm kerak" };
+  }
+  if (product.status === "HIDDEN") {
+    return { ok: false, error: "Yashirin mahsulot kanalga joylanmaydi" };
+  }
+
+  const settings = await getSettings();
+  try {
+    const ids = await postProductToChannel({
+      nameUz: product.nameUz,
+      categoryName: product.category.nameUz,
+      materialUz: product.materialUz,
+      price: product.price,
+      oldPrice: product.oldPrice,
+      sizes: product.sizes,
+      minOrderQty: product.minOrderQty,
+      slug: product.slug,
+      phone: settings.phone,
+      sku: product.sku,
+      imageFileNames: product.images.map((i) => i.fileName),
+    });
+    await db.product.update({ where: { id }, data: { tgMessageIds: ids } });
+    return { ok: true };
+  } catch (err) {
+    console.error("[admin] channel post failed:", err);
+    return { ok: false, error: "Kanalga joylashda xatolik (bot kanal admini ekanini tekshiring)" };
+  }
+}
+
 /** Create or update a product from the admin form (JSON payload). */
-export async function saveProduct(raw: unknown): Promise<{ ok: true; id: number; slug: string } | { ok: false; error: string }> {
+export async function saveProduct(raw: unknown): Promise<
+  | { ok: true; id: number; slug: string; channelPosted?: boolean; channelError?: string }
+  | { ok: false; error: string }
+> {
   await requireAdmin();
   const payload = raw as { id?: number } & Record<string, unknown>;
   const parsed = productFormSchema.safeParse(payload);
@@ -120,7 +169,20 @@ export async function saveProduct(raw: unknown): Promise<{ ok: true; id: number;
       },
     });
     revalidateProducts(slug);
-    return { ok: true, id: created.id, slug };
+
+    // Yangi mahsulot — rasm bo'lsa avtomatik kanalga joylash (Mini App / admin panel).
+    let channelPosted: boolean | undefined;
+    let channelError: string | undefined;
+    if (data.images.length > 0 && data.status !== "HIDDEN") {
+      const posted = await publishProductToChannel(created.id, false);
+      if (posted.ok) {
+        channelPosted = true;
+      } else {
+        channelError = posted.error;
+      }
+    }
+
+    return { ok: true, id: created.id, slug, channelPosted, channelError };
   } catch (err) {
     console.error("[admin] saveProduct failed:", err);
     return { ok: false, error: "Saqlashda xatolik" };
@@ -146,30 +208,6 @@ export async function deleteProduct(id: number) {
 /** §8.3 — post the product to the Telegram channel; store returned message ids. */
 export async function postProductChannel(id: number, force = false): Promise<{ ok: boolean; error?: string }> {
   await requireAdmin();
-  const product = await db.product.findUnique({ where: { id }, include: { images: { orderBy: { sortOrder: "asc" } } } });
-  if (!product) return { ok: false, error: "Mahsulot topilmadi" };
-  if (product.tgMessageIds.length > 0 && !force) {
-    return { ok: false, error: "Allaqachon kanalga joylangan" };
-  }
-  if (product.images.length === 0) {
-    return { ok: false, error: "Kamida bitta rasm kerak" };
-  }
-
-  const settings = await getSettings();
-  try {
-    const ids = await postProductToChannel({
-      nameUz: product.nameUz,
-      materialUz: product.materialUz,
-      price: product.price,
-      sizes: product.sizes,
-      slug: product.slug,
-      phone: settings.phone,
-      imageFileNames: product.images.map((i) => i.fileName),
-    });
-    await db.product.update({ where: { id }, data: { tgMessageIds: ids } });
-    return { ok: true };
-  } catch (err) {
-    console.error("[admin] channel post failed:", err);
-    return { ok: false, error: "Kanalga joylashda xatolik (bot sozlamalarini tekshiring)" };
-  }
+  const result = await publishProductToChannel(id, force);
+  return result.ok ? { ok: true } : { ok: false, error: result.error };
 }

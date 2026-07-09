@@ -2,7 +2,7 @@ import { Bot } from "grammy";
 import { BOT_TOKEN } from "./config";
 import { handleStart, handleStop } from "./handlers/start";
 import { handleBookingCallback } from "./handlers/callbacks";
-import { handleStats } from "./handlers/adminCommands";
+import { handleStats, handleAdminStatsCallback } from "./handlers/adminCommands";
 
 /**
  * Build a fully-configured bot. Shared by:
@@ -46,6 +46,14 @@ export function createBot(): Bot {
       await handleBookingCallback(ctx);
     } catch (err) {
       console.error("[bot] callback failed:", err);
+    }
+  });
+
+  bot.callbackQuery("admin:stats", async (ctx) => {
+    try {
+      await handleAdminStatsCallback(ctx);
+    } catch (err) {
+      console.error("[bot] admin stats callback failed:", err);
     }
   });
 
