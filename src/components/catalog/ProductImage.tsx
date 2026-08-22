@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { imageUrl, productImageLoader } from "@/lib/images";
 import { Logo } from "@/components/ui/Logo";
@@ -13,6 +15,11 @@ type Props = {
 /**
  * A pre-generated image variant via the custom loader, or a branded cream
  * placeholder (mark on a seam-ruled ground) when a product has no photo yet.
+ *
+ * This is a Client Component on purpose: `next/image` is one, and a function
+ * prop like `loader` cannot cross the server → client boundary. Rendering it
+ * from a Server Component throws "Functions cannot be passed directly to
+ * Client Components" the moment a product actually has an image.
  */
 export function ProductImageView({ fileName, alt, priority, sizes, className = "" }: Props) {
   if (!fileName) {
