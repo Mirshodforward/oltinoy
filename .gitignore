@@ -48,3 +48,4 @@ next-env.d.ts
 # telethon userbot (scripts/tg)
 scripts/tg/.venv/
 scripts/tg/out/
+scripts/tg/__pycache__/
