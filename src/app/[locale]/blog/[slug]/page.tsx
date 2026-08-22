@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
+import { Link } from "@/i18n/navigation";
 import { pageMetadata, localeUrl, SITE_URL } from "@/lib/seo";
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 import { renderMarkdown } from "@/lib/markdown";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { JsonLd, articleSchema } from "@/components/seo/JsonLd";
+import { ArrowLeft } from "@/components/ui/icons";
 
 export const revalidate = 3600;
 
@@ -60,12 +63,13 @@ export default async function BlogPostPage({
 
   const [t, tb] = await Promise.all([getTranslations("product"), getTranslations("blog")]);
   const title = locale === "ru" ? post.titleRu : post.titleUz;
-  const excerpt = (locale === "ru" ? post.excerptRu : post.excerptUz) || title;
+  const lede = locale === "ru" ? post.excerptRu : post.excerptUz;
+  const excerpt = lede || title;
   const content = locale === "ru" ? post.contentRu : post.contentUz;
   const html = renderMarkdown(content);
 
   return (
-    <div className="container-page py-8">
+    <>
       <JsonLd
         data={articleSchema({
           headline: title,
@@ -76,22 +80,60 @@ export default async function BlogPostPage({
           locale,
         })}
       />
-      <Breadcrumbs items={[{ name: t("breadcrumbHome"), href: "/" }, { name: tb("title"), href: "/blog" }, { name: title }]} />
 
-      <article className="mx-auto mt-6 max-w-2xl">
+      {/* The same slim cream strip every other inner page opens on — an article
+          that starts straight on ivory reads as if its masthead went missing. */}
+      <div className="panel-cream border-b" style={{ borderColor: "var(--line)" }}>
+        <div className="container-page py-4">
+          <Breadcrumbs
+            items={[
+              { name: t("breadcrumbHome"), href: "/" },
+              { name: tb("title"), href: "/blog" },
+              { name: title },
+            ]}
+          />
+        </div>
+      </div>
+
+      <article className="container-prose py-10 md:py-16">
         {post.publishedAt && (
-          <time className="text-xs" style={{ color: "var(--color-bronze)" }} dateTime={post.publishedAt.toISOString()}>
-            {tb("publishedOn")}: {formatDate(post.publishedAt, locale)}
+          <time className="kicker mt-7" dateTime={post.publishedAt.toISOString()}>
+            {formatDate(post.publishedAt, locale)}
           </time>
         )}
-        <h1 className="mt-2 text-3xl font-semibold leading-tight md:text-4xl">{title}</h1>
-        <div className="seam mt-4 w-24" aria-hidden="true" />
-        <div
-          className="prose-oltinoy mt-6 space-y-4 text-[0.975rem] leading-relaxed"
-          style={{ color: "var(--color-ink-soft)" }}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+
+        <h1 className="mt-4 text-4xl md:text-5xl">{title}</h1>
+
+        {lede && (
+          <p className="mt-5 text-lg leading-relaxed" style={{ color: "var(--fg-muted)" }}>
+            {lede}
+          </p>
+        )}
+
+        <div className="seam mt-8 w-20" aria-hidden="true" />
+
+        {/* Cover images are plain public paths, not product variants — no loader. */}
+        {post.coverImage && (
+          <Image
+            src={post.coverImage}
+            alt={title}
+            width={1200}
+            height={630}
+            unoptimized
+            priority
+            className="mt-10 w-full rounded-lg object-cover"
+          />
+        )}
+
+        <div className="prose-oltinoy mt-10" dangerouslySetInnerHTML={{ __html: html }} />
+
+        {/* ───────────────────────── Back ───────────────────────── */}
+        <div className="hairline mt-14" />
+        <Link href="/blog" className="link-seam mt-8 inline-flex items-center gap-2 py-2 text-sm">
+          <ArrowLeft size={17} />
+          {tb("backToBlog")}
+        </Link>
       </article>
-    </div>
+    </>
   );
 }

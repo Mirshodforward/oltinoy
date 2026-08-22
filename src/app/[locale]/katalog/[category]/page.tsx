@@ -5,8 +5,10 @@ import type { Locale } from "@/i18n/routing";
 import { pageMetadata } from "@/lib/seo";
 import { db } from "@/lib/db";
 import { parseFilters, queryCatalog, type CatalogSearchParams } from "@/lib/catalog";
-import { CatalogView } from "@/components/catalog/CatalogView";
-import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { getRailCategories } from "@/lib/queries";
+import { CatalogView, CategoryRail } from "@/components/catalog/CatalogView";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { categoryIcon } from "@/components/ui/icons";
 
 async function getCategory(slug: string) {
   try {
@@ -36,13 +38,15 @@ export async function generateMetadata({
   const cat = await getCategory(category);
   if (!cat) return {};
   const filters = parseFilters(await searchParams);
-  const t = await getTranslations({ locale, namespace: "catalog" });
+  // `categoryMeta` is a top-level namespace in the message files, not a child of
+  // `catalog` — reading it off the catalog translator shipped the key as the title.
+  const tm = await getTranslations({ locale, namespace: "categoryMeta" });
   const name = locale === "ru" ? cat.nameRu : cat.nameUz;
   return pageMetadata({
     locale,
     path: `/katalog/${category}`,
-    title: t("categoryMeta.titleTemplate", { name }),
-    description: t("categoryMeta.descriptionTemplate", { name }),
+    title: tm("titleTemplate", { name }),
+    description: tm("descriptionTemplate", { name }),
     index: !filters.hasActiveFilters,
   });
 }
@@ -60,32 +64,43 @@ export default async function CategoryPage({
   if (!cat || !cat.isActive) notFound();
 
   const filters = parseFilters(await searchParams);
-  const { total, products, totalPages } = await queryCatalog(filters, category);
 
-  const t = await getTranslations("catalog");
-  const tp = await getTranslations("product");
+  const [{ total, products, totalPages }, categories, t, tp, ti] = await Promise.all([
+    queryCatalog(filters, category),
+    getRailCategories(),
+    getTranslations("catalog"),
+    getTranslations("product"),
+    getTranslations("categoryIntro"),
+  ]);
+
   const name = locale === "ru" ? cat.nameRu : cat.nameUz;
+  const Icon = categoryIcon(category);
 
-  // Category intro paragraph (indexable content above the grid).
-  const intro = t.has(`categoryIntro.${category}`) ? t(`categoryIntro.${category}`) : "";
+  // Category intro paragraph (indexable content above the grid). Only four of
+  // the categories have one, hence the `has` guard.
+  const intro = ti.has(category) ? ti(category) : "";
 
   return (
-    <div className="container-page py-8">
-      <Breadcrumbs
-        items={[
+    <>
+      <PageHeader
+        crumbs={[
           { name: tp("breadcrumbHome"), href: "/" },
           { name: t("title"), href: "/katalog" },
           { name },
         ]}
+        kicker={
+          <>
+            <Icon size={14} />
+            {t("kicker")}
+          </>
+        }
+        title={name}
+        intro={intro}
       />
-      <h1 className="mt-4 text-3xl font-semibold md:text-4xl">{name}</h1>
-      <div className="seam mt-3 w-24" aria-hidden="true" />
-      {intro && (
-        <p className="mt-4 max-w-3xl text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>
-          {intro}
-        </p>
-      )}
-      <div className="mt-8">
+
+      <CategoryRail categories={categories} active={category} />
+
+      <div className="container-page section-y">
         <CatalogView
           basePath={`/katalog/${category}`}
           filters={filters}
@@ -94,6 +109,6 @@ export default async function CategoryPage({
           totalPages={totalPages}
         />
       </div>
-    </div>
+    </>
   );
 }

@@ -1,11 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { getRecipientCount, sendBroadcast, type BroadcastResult } from "@/app/(admin)/admin/(protected)/broadcast/actions";
+import {
+  AlertCircle,
+  ArrowRight,
+  CheckCircle,
+  Close,
+  Megaphone,
+  Users,
+} from "@/components/ui/icons";
 
 type ProductOption = { id: number; nameUz: string };
 
+/** One number from the send report — icon, count, what it counts. */
+function Stat({
+  icon,
+  value,
+  label,
+  tint,
+}: {
+  icon: React.ReactNode;
+  value: number;
+  label: string;
+  tint?: string;
+}) {
+  return (
+    <div className="rounded-sm border p-3" style={{ borderColor: "var(--line)" }}>
+      <dt className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--fg-muted)" }}>
+        <span style={{ color: tint ?? "var(--fg-subtle)" }}>{icon}</span>
+        {label}
+      </dt>
+      <dd className="price mt-1.5 text-2xl tabular-nums">{value}</dd>
+    </div>
+  );
+}
+
 export function BroadcastForm({ products }: { products: ProductOption[] }) {
+  const uid = useId();
   const [text, setText] = useState("");
   const [productId, setProductId] = useState<string>("");
   const [count, setCount] = useState<number | null>(null);
@@ -40,36 +72,58 @@ export function BroadcastForm({ products }: { products: ProductOption[] }) {
     setProductId("");
   }
 
+  /* ───────────────────────── Report ───────────────────────── */
   if (result) {
     return (
-      <div className="card max-w-lg p-5">
-        <h2 className="text-lg font-semibold">Broadcast yakunlandi</h2>
-        <ul className="mt-3 space-y-1 text-sm">
-          <li>✅ Yuborildi: {result.sent}</li>
-          <li>🚫 Bloklangan (o'chirildi): {result.blocked}</li>
-          <li>⚠️ Xatolik: {result.failed}</li>
-          <li>— Jami: {result.total}</li>
-        </ul>
-        <button type="button" onClick={() => setResult(null)} className="btn btn-outline mt-4">
+      <div className="card max-w-xl p-5 md:p-6">
+        <h2 className="kicker">
+          <CheckCircle size={14} />
+          Broadcast yakunlandi
+        </h2>
+        <dl className="mt-5 grid grid-cols-2 gap-3">
+          <Stat icon={<CheckCircle size={15} />} value={result.sent} label="Yuborildi" tint="var(--color-sage)" />
+          <Stat icon={<Close size={15} />} value={result.blocked} label="Bloklangan" tint="var(--color-rose-dk)" />
+          <Stat icon={<AlertCircle size={15} />} value={result.failed} label="Xatolik" tint="var(--color-danger)" />
+          <Stat icon={<Users size={15} />} value={result.total} label="Jami" tint="var(--color-gold-dk)" />
+        </dl>
+        <button type="button" onClick={() => setResult(null)} className="btn btn-outline mt-5">
+          <Megaphone size={17} />
           Yangi xabar
         </button>
       </div>
     );
   }
 
+  /* ───────────────────────── Confirm ───────────────────────── */
   if (confirming) {
     return (
-      <div className="card max-w-lg p-5">
-        <h2 className="text-lg font-semibold">Tasdiqlash</h2>
-        <p className="mt-2 text-sm" style={{ color: "var(--color-muted)" }}>
-          Xabar <strong>{count}</strong> ta aktiv obunachiga yuboriladi. Bu amalni ortga qaytarib bo'lmaydi.
+      <div className="card max-w-xl p-5 md:p-6">
+        <h2 className="kicker" style={{ color: "var(--color-rose-dk)" }}>
+          <AlertCircle size={14} />
+          Tasdiqlash
+        </h2>
+        <p className="mt-3 text-sm" style={{ color: "var(--fg-muted)" }}>
+          Xabar <strong style={{ color: "var(--fg)" }}>{count}</strong> ta aktiv obunachiga yuboriladi. Bu amalni ortga
+          qaytarib bo&apos;lmaydi.
         </p>
-        <div className="mt-3 whitespace-pre-line rounded-md border p-3 text-sm" style={{ borderColor: "var(--color-line)" }}>
+
+        <div
+          className="panel-cream mt-4 whitespace-pre-line rounded-sm border p-4 text-sm"
+          style={{ borderColor: "var(--line)" }}
+        >
           {text}
         </div>
-        {error && <p className="mt-2 text-sm" style={{ color: "#b91c1c" }}>{error}</p>}
-        <div className="mt-4 flex gap-3">
+
+        {error && (
+          <p role="alert" className="field-error">
+            <AlertCircle size={14} className="flex-none" />
+            {error}
+          </p>
+        )}
+
+        <div className="mt-5 flex flex-wrap gap-3">
           <button type="button" onClick={onSend} disabled={sending} className="btn btn-gold">
+            <Megaphone size={17} />
             {sending ? "Yuborilmoqda…" : `Ha, ${count} kishiga yuborish`}
           </button>
           <button type="button" onClick={() => setConfirming(false)} disabled={sending} className="btn btn-outline">
@@ -80,25 +134,66 @@ export function BroadcastForm({ products }: { products: ProductOption[] }) {
     );
   }
 
+  /* ───────────────────────── Compose ───────────────────────── */
   return (
-    <div className="max-w-lg space-y-4">
-      <div>
-        <label className="field-label">Xabar matni *</label>
-        <textarea rows={5} className="field-input resize-none" value={text} onChange={(e) => setText(e.target.value)} placeholder="Yangi kolleksiya haqida xabar…" />
+    <div className="card max-w-xl p-5 md:p-6">
+      <h2 className="kicker">
+        <Megaphone size={14} />
+        Xabar
+      </h2>
+      <p className="mt-2 text-sm" style={{ color: "var(--fg-muted)" }}>
+        Matn Telegram bot orqali barcha aktiv obunachilarga boradi.
+      </p>
+
+      <div className="mt-5 space-y-5">
+        <div>
+          <label className="field-label" htmlFor={`${uid}-text`}>
+            Xabar matni *
+          </label>
+          <textarea
+            id={`${uid}-text`}
+            name="text"
+            rows={6}
+            className="field-input resize-y"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Yangi kolleksiya haqida xabar…"
+          />
+        </div>
+
+        <div>
+          <label className="field-label" htmlFor={`${uid}-productId`}>
+            Mahsulot biriktirish (ixtiyoriy)
+          </label>
+          <select
+            id={`${uid}-productId`}
+            name="productId"
+            className="field-input"
+            value={productId}
+            onChange={(e) => setProductId(e.target.value)}
+          >
+            <option value="">— Yo&apos;q —</option>
+            {products.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.nameUz}
+              </option>
+            ))}
+          </select>
+          <p className="field-hint">Tanlansa, xabarga mahsulot rasmi va havolasi qo&apos;shiladi.</p>
+        </div>
+
+        {error && (
+          <p role="alert" className="field-error">
+            <AlertCircle size={14} className="flex-none" />
+            {error}
+          </p>
+        )}
+
+        <button type="button" onClick={onReview} className="btn btn-primary">
+          Ko&apos;rib chiqish
+          <ArrowRight size={17} />
+        </button>
       </div>
-      <div>
-        <label className="field-label">Mahsulot biriktirish (ixtiyoriy — rasm + havola qo'shiladi)</label>
-        <select className="field-input" value={productId} onChange={(e) => setProductId(e.target.value)}>
-          <option value="">— Yo'q —</option>
-          {products.map((p) => (
-            <option key={p.id} value={p.id}>{p.nameUz}</option>
-          ))}
-        </select>
-      </div>
-      {error && <p className="text-sm" style={{ color: "#b91c1c" }}>{error}</p>}
-      <button type="button" onClick={onReview} className="btn btn-primary">
-        Ko'rib chiqish →
-      </button>
     </div>
   );
 }

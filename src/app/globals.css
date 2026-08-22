@@ -1,37 +1,262 @@
 @import "tailwindcss";
 
-/*
-  Oltinoy Collection design system.
-  Palette derived from the brand: ink-navy, warm ivory (fabric), oltin/gold,
-  muted bronze, deep sage. Light theme. Signature = fine dashed gold "seam" rule.
-*/
-@theme {
-  /* Brand palette */
-  --color-ink: #14161f; /* ink-navy — header/footer, primary text */
-  --color-ink-soft: #2a2d3a;
-  --color-ivory: #f7f3ec; /* warm ivory — page background */
-  --color-ivory-deep: #efe8dc;
-  --color-gold: #c9a227; /* oltin/gold — logo, price, active states (sparingly) */
-  --color-gold-soft: #d8b959;
-  --color-bronze: #8a6f4d; /* muted bronze — secondary */
-  --color-sage: #2e5e4e; /* deep sage — success states */
-  --color-sage-soft: #3d7a64;
-
-  --color-background: var(--color-ivory);
-  --color-foreground: var(--color-ink);
-  --color-muted: #6b6558;
-  --color-line: #e2d9c9;
-
-  /* Fonts (wired via CSS variables from next/font/local) */
-  --font-display: var(--font-display), Georgia, serif;
-  --font-body: var(--font-body), system-ui, sans-serif;
-
-  --radius-card: 0.75rem;
+/* Cyrillic companions. Neither Fraunces nor the Manrope subset we ship covers
+   Cyrillic, so the Russian site rendered entirely in Arial. These faces are
+   scoped by `unicode-range`, so an Uzbek visitor never downloads them; they are
+   chained in via next/font's `fallback` list in src/app/fonts.ts. */
+@font-face {
+  font-family: "Oltinoy Cyr Display";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/playfair-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 
+@font-face {
+  font-family: "Oltinoy Cyr Body";
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("/fonts/manrope-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+
+/* ==========================================================================
+   Oltinoy Collection — design system v2
+   --------------------------------------------------------------------------
+   The palette is sampled from the brand mark itself: burnished gold (#D0A050),
+   dusty clay-rose (#C79683) and the warm ivory the monogram floats on. The
+   neutral is a warm espresso rather than a cold navy so gold and rose sit in
+   the same temperature family.
+
+   Two signatures carry the brand through the UI:
+     • the seam  — a fine dashed gold stitch line (the tailoring workshop)
+     • the arc   — a thin crescent, for "oltin oy" (the golden moon)
+   ========================================================================== */
+
+@theme {
+  /* ---- Neutrals (warm espresso → ivory) -------------------------------- */
+  --color-ink: #1b1512; /* primary text, dark sections */
+  --color-ink-2: #2b221d; /* elevated dark surface */
+  --color-ink-3: #46382f; /* dark hairline */
+  --color-mocha: #6e5a4e; /* muted text on light — 6.0:1 on ivory */
+  --color-taupe: #9a8779; /* subtle text (large only) */
+  --color-sand: #e6dbcb; /* hairline on light */
+  --color-cream: #f3ebdf; /* alternate surface */
+  --color-ivory: #fbf7f1; /* page background */
+  --color-paper: #ffffff; /* cards */
+
+  /* ---- Brand ----------------------------------------------------------- */
+  --color-gold: #c9a24e; /* brand gold — accents, active states */
+  --color-gold-lt: #e2c47e; /* highlight gold (on dark) */
+  --color-gold-dk: #8e6a22; /* text-safe gold — 4.8:1 on ivory */
+  --color-rose: #c79683; /* brand rose — soft accents */
+  --color-rose-lt: #ecd8cf; /* rose surface */
+  --color-rose-dk: #955f4b; /* text-safe rose — 5.2:1 on ivory */
+  --color-sage: #4f7a63; /* in-stock / success */
+  --color-danger: #b0453c; /* errors / sold out */
+
+  /* Tailwind semantic aliases */
+  --color-background: #fbf7f1;
+  --color-foreground: #1b1512;
+  --color-muted: #6e5a4e;
+  --color-line: #e6dbcb;
+
+  /* ---- Type ------------------------------------------------------------ */
+  --font-display: var(--font-display), "Oltinoy Cyr Display", "Georgia", "Times New Roman", serif;
+  --font-body: var(--font-body), "Oltinoy Cyr Body", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Fluid scale — 320px → 1440px */
+  --text-2xs: clamp(0.688rem, 0.67rem + 0.08vw, 0.75rem);
+  --text-xs: clamp(0.75rem, 0.73rem + 0.1vw, 0.813rem);
+  --text-sm: clamp(0.844rem, 0.82rem + 0.13vw, 0.906rem);
+  --text-base: clamp(0.938rem, 0.91rem + 0.17vw, 1.031rem);
+  --text-lg: clamp(1.063rem, 1.01rem + 0.26vw, 1.188rem);
+  --text-xl: clamp(1.188rem, 1.1rem + 0.44vw, 1.406rem);
+  --text-2xl: clamp(1.375rem, 1.23rem + 0.72vw, 1.75rem);
+  --text-3xl: clamp(1.625rem, 1.36rem + 1.33vw, 2.375rem);
+  --text-4xl: clamp(1.938rem, 1.5rem + 2.19vw, 3.125rem);
+  --text-5xl: clamp(2.25rem, 1.55rem + 3.5vw, 4.25rem);
+  --text-6xl: clamp(2.625rem, 1.5rem + 5.6vw, 5.5rem);
+
+  /* ---- Shape ----------------------------------------------------------- */
+  --radius-xs: 3px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-card: 14px;
+
+  /* ---- Elevation (warm-tinted, never grey) ----------------------------- */
+  --shadow-xs: 0 1px 2px rgb(27 21 18 / 0.05);
+  --shadow-sm: 0 2px 6px -2px rgb(27 21 18 / 0.07), 0 1px 2px rgb(27 21 18 / 0.05);
+  --shadow-md: 0 8px 24px -8px rgb(27 21 18 / 0.13), 0 2px 6px -2px rgb(27 21 18 / 0.06);
+  --shadow-lg: 0 22px 60px -18px rgb(27 21 18 / 0.24), 0 8px 20px -10px rgb(27 21 18 / 0.1);
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --ease-brand: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-rise: rise 0.6s var(--ease-expo) both;
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
 @layer base {
+  :root {
+    /* Contextual tokens — components read these, never raw palette values,
+       so a `.on-dark` wrapper flips an entire subtree in one declaration. */
+    --fg: var(--color-ink);
+    --fg-muted: var(--color-mocha);
+    --fg-subtle: var(--color-taupe);
+    --bg: var(--color-ivory);
+    --surface: var(--color-paper);
+    --surface-2: var(--color-cream);
+    --line: var(--color-sand);
+    --accent: var(--color-gold);
+    --accent-text: var(--color-gold-dk);
+
+    --gutter: 1.25rem;
+    --section-y: clamp(3.25rem, 6vw, 6.5rem);
+    --header-h: 4.5rem;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --gutter: 2rem;
+      --header-h: 5rem;
+    }
+  }
+
+  /* Any dark band: <section className="on-dark bg-ink"> */
+  .on-dark {
+    --fg: var(--color-ivory);
+    --fg-muted: color-mix(in srgb, var(--color-ivory) 72%, transparent);
+    --fg-subtle: color-mix(in srgb, var(--color-ivory) 50%, transparent);
+    --bg: var(--color-ink);
+    --surface: var(--color-ink-2);
+    --surface-2: var(--color-ink-2);
+    --line: color-mix(in srgb, var(--color-ivory) 14%, transparent);
+    --accent: var(--color-gold-lt);
+    --accent-text: var(--color-gold-lt);
+    color: var(--fg);
+  }
+
+  * {
+    border-color: var(--line);
+  }
+
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.018em;
+    color: var(--fg);
+    text-wrap: balance;
+  }
+
+  h5,
+  h6 {
+    font-weight: 600;
+    color: var(--fg);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Visible keyboard focus — accessibility requirement. */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  /* Slim, warm scrollbar so the ivory page keeps its temperature. */
+  @supports (scrollbar-color: auto) {
+    html {
+      scrollbar-color: var(--color-sand) transparent;
+      scrollbar-width: thin;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -44,218 +269,635 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
-  }
-
-  body {
-    background: var(--color-ivory);
-    color: var(--color-ink);
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: var(--font-display);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    color: var(--color-ink);
-  }
-
-  /* Visible keyboard focus — accessibility requirement. */
-  :focus-visible {
-    outline: 2px solid var(--color-gold);
-    outline-offset: 2px;
-    border-radius: 2px;
-  }
-
-  ::selection {
-    background: var(--color-gold);
-    color: var(--color-ink);
   }
 }
 
+/* ==========================================================================
+   Layout
+   ========================================================================== */
 @layer components {
-  /* Signature: fine dashed gold "seam" — the one flourish (echoes the workshop). */
+  .container-page {
+    width: 100%;
+    max-width: 82rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Comfortable measure for long-form reading (blog, about). */
+  .container-prose {
+    width: 100%;
+    max-width: 44rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .section-y {
+    padding-block: var(--section-y);
+  }
+
+  /* Full-bleed band inside a container-constrained parent. */
+  .bleed {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Signature: the seam — a fine dashed gold stitch line.               */
+  /* ------------------------------------------------------------------ */
   .seam {
     height: 1px;
     background-image: repeating-linear-gradient(
       to right,
-      var(--color-gold) 0,
-      var(--color-gold) 6px,
-      transparent 6px,
-      transparent 12px
+      var(--color-gold) 0 7px,
+      transparent 7px 14px
     );
-    opacity: 0.55;
+    opacity: 0.6;
   }
 
-  .seam-active {
+  .seam-strong {
     height: 2px;
+    opacity: 0.95;
     background-image: repeating-linear-gradient(
       to right,
-      var(--color-gold) 0,
-      var(--color-gold) 5px,
-      transparent 5px,
-      transparent 10px
+      var(--color-gold) 0 6px,
+      transparent 6px 12px
     );
   }
 
-  /* Price is set in the display face — "price is the product" in optom. */
+  .seam-v {
+    width: 1px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--color-gold) 0 7px,
+      transparent 7px 14px
+    );
+    opacity: 0.6;
+  }
+
+  /* Signature: the arc — a thin crescent used as a section ornament. */
+  .arc {
+    aspect-ratio: 1;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--color-gold) 45%, transparent);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    transform: rotate(-35deg);
+    pointer-events: none;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Typography helpers                                                  */
+  /* ------------------------------------------------------------------ */
+
+  /* Small-caps label above a heading, preceded by a short gold dash. */
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-body);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-text);
+  }
+  .kicker::before {
+    content: "";
+    width: 1.75rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.7;
+    flex: none;
+  }
+  .kicker-center::before {
+    display: none;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.06;
+    letter-spacing: -0.025em;
+  }
+
+  /* Price is set in the display face — in optom, the price is the product. */
   .price {
     font-family: var(--font-display);
+    font-variant-numeric: tabular-nums lining-nums;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--fg);
+  }
+
+  .price-old {
+    font-family: var(--font-body);
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.01em;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    color: var(--fg-subtle);
   }
 
-  .container-page {
+  /* Inline link that grows its underline from the left on hover. */
+  .link-seam {
+    position: relative;
+    display: inline-block;
+    color: var(--accent-text);
+    font-weight: 600;
+  }
+  .link-seam::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
     width: 100%;
-    max-width: 80rem;
-    margin-inline: auto;
-    padding-inline: 1rem;
+    background: currentColor;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform 0.35s var(--ease-expo);
   }
-  @media (min-width: 768px) {
-    .container-page {
-      padding-inline: 2rem;
-    }
+  .link-seam:hover::after,
+  .link-seam:focus-visible::after {
+    transform-origin: left;
+    transform: scaleX(1);
   }
 
-  /* Buttons */
+  /* ------------------------------------------------------------------ */
+  /* Buttons                                                             */
+  /* ------------------------------------------------------------------ */
   .btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    min-height: 44px; /* tap target */
-    padding: 0.625rem 1.25rem;
+    gap: 0.55rem;
+    min-height: 46px;
+    padding: 0.7rem 1.4rem;
     border-radius: 999px;
+    border: 1px solid transparent;
+    font-family: var(--font-body);
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: var(--text-sm);
     line-height: 1;
-    transition:
-      background-color 0.15s ease,
-      color 0.15s ease,
-      border-color 0.15s ease,
-      transform 0.1s ease;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
     cursor: pointer;
+    transition:
+      background-color 0.2s var(--ease-brand),
+      color 0.2s var(--ease-brand),
+      border-color 0.2s var(--ease-brand),
+      box-shadow 0.25s var(--ease-brand),
+      transform 0.12s var(--ease-brand);
   }
   .btn:active {
     transform: translateY(1px);
   }
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn svg {
+    flex: none;
+  }
+
   .btn-primary {
     background: var(--color-ink);
     color: var(--color-ivory);
   }
   .btn-primary:hover {
-    background: var(--color-ink-soft);
+    background: var(--color-ink-2);
+    box-shadow: var(--shadow-md);
   }
+
   .btn-gold {
     background: var(--color-gold);
     color: var(--color-ink);
   }
   .btn-gold:hover {
-    background: var(--color-gold-soft);
+    background: var(--color-gold-lt);
+    box-shadow: 0 10px 26px -10px rgb(201 162 78 / 0.75);
   }
+
   .btn-outline {
     background: transparent;
-    color: var(--color-ink);
-    border: 1px solid var(--color-ink);
+    color: var(--fg);
+    border-color: color-mix(in srgb, var(--fg) 28%, transparent);
   }
   .btn-outline:hover {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+
+  .btn-ghost {
+    background: color-mix(in srgb, var(--fg) 5%, transparent);
+    color: var(--fg);
+  }
+  .btn-ghost:hover {
+    background: color-mix(in srgb, var(--fg) 10%, transparent);
+  }
+
+  .btn-sm {
+    min-height: 38px;
+    padding: 0.45rem 1rem;
+    font-size: var(--text-xs);
+  }
+
+  .btn-lg {
+    min-height: 54px;
+    padding: 0.9rem 1.9rem;
+    font-size: var(--text-base);
+  }
+
+  .btn-block {
+    width: 100%;
+  }
+
+  /* Compact variants stay compact for a mouse, but never drop below the 44px
+     minimum on a touch screen — most of this catalogue is browsed on a phone. */
+  @media (pointer: coarse) {
+    .btn-sm {
+      min-height: 44px;
+    }
+    .btn-icon {
+      width: 46px;
+      height: 46px;
+    }
+  }
+
+  /* Icon-only tap target. */
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    color: var(--fg);
+    transition:
+      background-color 0.2s var(--ease-brand),
+      color 0.2s var(--ease-brand);
+  }
+  .btn-icon:hover {
+    background: color-mix(in srgb, var(--fg) 8%, transparent);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Chips, badges, pills                                                */
+  /* ------------------------------------------------------------------ */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--fg);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition:
+      border-color 0.18s var(--ease-brand),
+      background-color 0.18s var(--ease-brand),
+      color 0.18s var(--ease-brand);
+  }
+  .chip:hover {
+    border-color: var(--color-gold);
+  }
+  .chip[aria-pressed="true"],
+  .chip[data-active="true"] {
     background: var(--color-ink);
+    border-color: var(--color-ink);
     color: var(--color-ivory);
+  }
+
+  /* Static, non-interactive variant (spec lists). */
+  .chip-static {
+    cursor: default;
+    min-height: 28px;
+    min-width: 0;
+    padding: 0.2rem 0.65rem;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    background: transparent;
+  }
+  .chip-static:hover {
+    border-color: var(--line);
   }
 
   .badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.15rem 0.6rem;
+    gap: 0.3rem;
+    padding: 0.28rem 0.65rem;
     border-radius: 999px;
-    font-size: 0.7rem;
+    font-family: var(--font-body);
+    font-size: var(--text-2xs);
     font-weight: 700;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    line-height: 1;
+    backdrop-filter: blur(6px);
   }
   .badge-new {
     background: var(--color-gold);
     color: var(--color-ink);
   }
+  .badge-sale {
+    background: var(--color-rose);
+    color: #fff;
+  }
   .badge-sold {
-    background: var(--color-ink);
+    background: color-mix(in srgb, var(--color-ink) 88%, transparent);
     color: var(--color-ivory);
   }
+  .badge-soft {
+    background: color-mix(in srgb, var(--color-ink) 6%, transparent);
+    color: var(--fg-muted);
+  }
 
+  /* ------------------------------------------------------------------ */
+  /* Surfaces                                                            */
+  /* ------------------------------------------------------------------ */
   .card {
-    background: #fff;
-    border: 1px solid var(--color-line);
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: var(--radius-card);
     overflow: hidden;
   }
 
+  .card-lift {
+    transition:
+      transform 0.4s var(--ease-expo),
+      box-shadow 0.4s var(--ease-expo),
+      border-color 0.3s var(--ease-brand);
+  }
+  .card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(in srgb, var(--color-gold) 55%, var(--line));
+  }
+
+  .hairline {
+    height: 1px;
+    background: var(--line);
+    border: 0;
+  }
+
+  /* Ivory-on-ivory panel used to break up long light stretches. */
+  .panel-cream {
+    background: var(--color-cream);
+  }
+
+  .panel-rose {
+    background: var(--color-rose-lt);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Forms                                                               */
+  /* ------------------------------------------------------------------ */
   .field-label {
     display: block;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--color-ink);
-    margin-bottom: 0.35rem;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 0.45rem;
   }
+
   .field-input {
     width: 100%;
-    min-height: 44px;
-    padding: 0.6rem 0.85rem;
-    background: #fff;
-    border: 1px solid var(--color-line);
-    border-radius: 0.5rem;
-    font-size: 0.95rem;
-    color: var(--color-ink);
-    transition: border-color 0.15s ease;
+    min-height: 48px;
+    padding: 0.7rem 0.95rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    color: var(--fg);
+    transition:
+      border-color 0.18s var(--ease-brand),
+      box-shadow 0.18s var(--ease-brand);
+  }
+  .field-input::placeholder {
+    color: var(--fg-subtle);
   }
   .field-input:focus {
     border-color: var(--color-gold);
     outline: none;
-    box-shadow: 0 0 0 3px rgb(201 162 39 / 0.15);
+    box-shadow: 0 0 0 3px rgb(201 162 78 / 0.18);
+  }
+  .field-input[aria-invalid="true"] {
+    border-color: var(--color-danger);
+  }
+  .field-input[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 3px rgb(176 69 60 / 0.16);
   }
 
-  /* Rendered markdown (blog / about) */
+  select.field-input {
+    appearance: none;
+    padding-right: 2.4rem;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236e5a4e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+  }
+
+  .field-error {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-danger);
+  }
+
+  .field-hint {
+    margin-top: 0.35rem;
+    font-size: var(--text-xs);
+    color: var(--fg-subtle);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Utilities                                                           */
+  /* ------------------------------------------------------------------ */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Horizontal snap rail (mobile category / thumbnail strips). */
+  .rail {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    -webkit-overflow-scrolling: touch;
+  }
+  .rail > * {
+    scroll-snap-align: start;
+    flex: none;
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-cream) 25%,
+      color-mix(in srgb, var(--color-cream) 60%, #fff) 50%,
+      var(--color-cream) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Infinite brand marquee. The track must contain the content twice. */
+  .marquee {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .marquee__track {
+    display: flex;
+    flex: none;
+    align-items: center;
+    animation: var(--animate-marquee);
+    will-change: transform;
+  }
+  .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+
+  /* Scroll-driven reveal. Progressive enhancement only — where view()
+     timelines are unsupported the content simply renders in place. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      /* The range always closes inside `entry`, so an element is fully opaque
+         by the time it has finished entering the viewport — a reveal must
+         never be able to leave content invisible. */
+      .reveal {
+        animation: reveal-in linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 75%;
+      }
+      .reveal-group > * {
+        animation: reveal-in linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 70%;
+      }
+      .reveal-group > *:nth-child(2) {
+        animation-range: entry 4% entry 78%;
+      }
+      .reveal-group > *:nth-child(3) {
+        animation-range: entry 8% entry 86%;
+      }
+      .reveal-group > *:nth-child(n + 4) {
+        animation-range: entry 12% entry 94%;
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Rendered markdown (blog / about)                                    */
+  /* ------------------------------------------------------------------ */
+  .prose-oltinoy {
+    font-size: var(--text-lg);
+    line-height: 1.75;
+    color: var(--color-ink-2);
+  }
+  .prose-oltinoy > * + * {
+    margin-top: 1.1em;
+  }
   .prose-oltinoy h2 {
-    font-size: 1.4rem;
-    margin-top: 1.75rem;
-    margin-bottom: 0.5rem;
+    font-size: var(--text-2xl);
+    margin-top: 2.2em;
+    margin-bottom: 0.6em;
+    scroll-margin-top: calc(var(--header-h) + 1rem);
   }
   .prose-oltinoy h3 {
-    font-size: 1.15rem;
-    margin-top: 1.25rem;
-    margin-bottom: 0.4rem;
-  }
-  .prose-oltinoy p {
-    margin-bottom: 0.9rem;
+    font-size: var(--text-xl);
+    margin-top: 1.8em;
+    margin-bottom: 0.5em;
   }
   .prose-oltinoy ul,
   .prose-oltinoy ol {
-    margin: 0.75rem 0 1rem 1.25rem;
+    padding-left: 1.3em;
     list-style: revert;
   }
-  .prose-oltinoy li {
-    margin-bottom: 0.35rem;
+  .prose-oltinoy li + li {
+    margin-top: 0.4em;
+  }
+  .prose-oltinoy li::marker {
+    color: var(--color-gold-dk);
   }
   .prose-oltinoy a {
-    color: var(--color-bronze);
+    color: var(--color-rose-dk);
     text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .prose-oltinoy a:hover {
+    color: var(--color-ink);
+  }
+  .prose-oltinoy strong {
+    font-weight: 700;
+    color: var(--color-ink);
   }
   .prose-oltinoy blockquote {
-    border-left: 3px solid var(--color-gold);
-    padding-left: 1rem;
+    border-left: 2px solid var(--color-gold);
+    padding: 0.2em 0 0.2em 1.25em;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
     font-style: italic;
-    color: var(--color-muted);
-    margin: 1rem 0;
+    line-height: 1.45;
+    color: var(--color-ink);
   }
   .prose-oltinoy img {
-    max-width: 100%;
+    width: 100%;
     height: auto;
-    border-radius: 0.5rem;
-    margin: 1rem 0;
+    border-radius: var(--radius-md);
+    margin-block: 1.8em;
+  }
+  .prose-oltinoy hr {
+    border: 0;
+    height: 1px;
+    margin-block: 2.4em;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-gold) 0 7px,
+      transparent 7px 14px
+    );
+    opacity: 0.6;
+  }
+  .prose-oltinoy table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+  }
+  .prose-oltinoy th,
+  .prose-oltinoy td {
+    border: 1px solid var(--line);
+    padding: 0.6em 0.8em;
+    text-align: left;
+  }
+  .prose-oltinoy th {
+    background: var(--color-cream);
+    font-weight: 700;
   }
 }

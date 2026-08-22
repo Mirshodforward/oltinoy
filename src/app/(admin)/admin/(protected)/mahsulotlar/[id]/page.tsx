@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { ProductForm, type ProductInitial } from "@/components/admin/ProductForm";
+import { ArrowLeft, ExternalLink } from "@/components/ui/icons";
 
 export const dynamic = "force-dynamic";
 
@@ -45,17 +46,32 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
 
   return (
     <div className="max-w-4xl">
-      <Link href="/admin/mahsulotlar" className="text-sm" style={{ color: "var(--color-bronze)" }}>
-        ← Mahsulotlar
+      {/* ───────────────────────── Header ───────────────────────── */}
+      <Link
+        href="/admin/mahsulotlar"
+        className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold"
+        style={{ color: "var(--color-gold-dk)" }}
+      >
+        <ArrowLeft size={16} />
+        Mahsulotlar
       </Link>
-      <div className="mt-2 flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">{product.nameUz}</h1>
-        <Link href={`/mahsulot/${product.slug}`} target="_blank" className="text-sm hover:underline" style={{ color: "var(--color-bronze)" }}>
-          Saytda ko'rish ↗
+
+      <header className="mt-1 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-2xl">
+          <h1 className="text-3xl">{product.nameUz}</h1>
+          <p className="mt-3 text-sm" style={{ color: "var(--fg-muted)" }}>
+            /mahsulot/{product.slug}
+            {product.sku ? ` · ${product.sku}` : ""}
+          </p>
+        </div>
+        <Link href={`/mahsulot/${product.slug}`} target="_blank" className="btn btn-outline btn-sm shrink-0">
+          Saytda ko'rish
+          <ExternalLink size={15} />
         </Link>
-      </div>
-      <div className="seam mt-3 w-24" aria-hidden="true" />
-      <div className="mt-6">
+      </header>
+      <div className="seam mt-6" aria-hidden="true" />
+
+      <div className="mt-8">
         <ProductForm categories={categories} initial={initial} />
       </div>
     </div>

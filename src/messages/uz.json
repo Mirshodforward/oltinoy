@@ -10,7 +10,12 @@
     "about": "Biz haqimizda",
     "contact": "Aloqa",
     "menu": "Menyu",
-    "close": "Yopish"
+    "close": "Yopish",
+    "primary": "Asosiy navigatsiya",
+    "channel": "Kanal",
+    "order": "Buyurtma berish",
+    "searchCatalog": "Katalogdan qidirish",
+    "skip": "Asosiy kontentga o'tish"
   },
   "common": {
     "loading": "Yuklanmoqda…",
@@ -23,7 +28,9 @@
     "search": "Qidirish",
     "searchPlaceholder": "Mahsulot nomi bo'yicha qidirish…",
     "viewAll": "Barchasini ko'rish",
-    "backHome": "Bosh sahifaga qaytish"
+    "backHome": "Bosh sahifaga qaytish",
+    "next": "Keyingi",
+    "prev": "Oldingi"
   },
   "home": {
     "metaTitle": "Oltinoy Collection — abaya, ko'ylak, rumol optom | Toshkent",
@@ -33,10 +40,32 @@
     "heroSubtitle": "Oltinoy Collection — Toshkentdagi o'z tikuv sexiga ega brend. Abaya, ko'ylak va rumollarni to'g'ridan-to'g'ri ishlab chiqaruvchidan optom oling.",
     "heroCtaCatalog": "Katalogni ko'rish",
     "heroCtaChannel": "Telegram kanal",
-    "newCollection": "Yangi kolleksiya",
-    "newCollectionSubtitle": "Eng so'nggi modellar — birinchilardan bo'lib bron qiling",
+    "heroStats": {
+      "sizesValue": "46–56",
+      "sizesLabel": "Razmerlar qatori",
+      "weeklyValue": "Har hafta",
+      "weeklyLabel": "Yangi modellar",
+      "regionsValue": "14",
+      "regionsLabel": "Viloyatga yetkazamiz"
+    },
+    "marquee": {
+      "one": "O'z tikuv seximiz",
+      "two": "Optom narxlar",
+      "three": "Har hafta yangi kolleksiya",
+      "four": "Vositachisiz",
+      "five": "46–56 razmerlar",
+      "six": "O'zbekiston bo'ylab yetkazib berish"
+    },
+    "categoriesKicker": "Assortiment",
     "categoriesTitle": "Kategoriyalar",
+    "categoriesSubtitle": "Abaya, ko'ylak, rumol va tayyor to'plamlar — hammasi bir sexdan.",
+    "newCollectionKicker": "Yangi kelganlar",
+    "newCollection": "Yangi kolleksiya",
+    "newCollectionSubtitle": "Eng so'nggi modellar — birinchilardan bo'lib bron qiling.",
+    "newCollectionEmpty": "Yangi modellar tez orada qo'shiladi. Telegram kanalimizga obuna bo'ling — birinchi bo'lib bilib olasiz.",
+    "whyKicker": "Nega biz",
     "whyTitle": "Nega Oltinoy Collection?",
+    "whySubtitle": "Resellerlar biz bilan yillar davomida ishlaydi — sababi oddiy.",
     "why": {
       "workshop": {
         "title": "O'z tikuv seximiz",
@@ -55,18 +84,48 @@
         "text": "Toshkent, Bek Baraka bozori, 12-qator, 473-do'kon. Kelib ko'rishingiz mumkin."
       }
     },
-    "faqTitle": "Ko'p so'raladigan savollar"
+    "processKicker": "Oddiy tartib",
+    "processTitle": "Buyurtma uch qadamda",
+    "processSubtitle": "Ro'yxatdan o'tish shart emas — bron qoldiring, qolganini o'zimiz hal qilamiz.",
+    "process": {
+      "one": {
+        "title": "Modelni tanlang",
+        "text": "Katalogdan model, razmer va sonini belgilang. Narxlar optom — hammasi ochiq ko'rsatilgan."
+      },
+      "two": {
+        "title": "Bron qoldiring",
+        "text": "Ism va telefon raqamingizni yozing. Bron bir daqiqada rasmiylashadi."
+      },
+      "three": {
+        "title": "Operator bog'lanadi",
+        "text": "Yetkazib berish va to'lov shartlarini kelishamiz, buyurtmani jo'natamiz."
+      }
+    },
+    "ctaKicker": "Telegram",
+    "ctaTitle": "Yangi kolleksiyani birinchi bo'lib ko'ring",
+    "ctaText": "Har hafta yangi modellar, narxlar va chegirmalar — avval Telegram kanalimizda e'lon qilinadi.",
+    "faqKicker": "Savol-javob",
+    "faqTitle": "Ko'p so'raladigan savollar",
+    "faqSubtitle": "Optom hamkorlik bo'yicha eng ko'p beriladigan savollarga javoblar."
   },
   "catalog": {
     "metaTitle": "Katalog — abaya, ko'ylak, rumol optom | Oltinoy Collection",
     "metaDescription": "Oltinoy Collection to'liq katalogi: abaya, ko'ylak, rumol va to'plamlar. Optom narxlar, 46–56 razmerlar. Toshkentdan O'zbekiston bo'ylab yetkazib beramiz.",
+    "kicker": "Optom katalog",
     "title": "Katalog",
+    "intro": "Barcha modellar o'z tikuv seximizda tikiladi. Narxlar optom — minimal buyurtmadan boshlab.",
     "resultsCount": "{count} ta mahsulot",
     "empty": "Bu filtrlarga mos mahsulot topilmadi.",
+    "emptyTitle": "Hech narsa topilmadi",
+    "emptyCta": "Filtrlarni tozalash",
     "filters": "Filtrlar",
+    "filtersTitle": "Filtrlash",
     "applyFilters": "Qo'llash",
     "clearFilters": "Tozalash",
+    "clearAll": "Hammasini tozalash",
+    "activeFilters": "Faol filtrlar",
     "category": "Kategoriya",
+    "allCategories": "Barcha kategoriyalar",
     "size": "O'lcham",
     "priceRange": "Narx oralig'i",
     "priceMin": "dan (so'm)",
@@ -76,7 +135,9 @@
     "sortPriceAsc": "Arzon → qimmat",
     "sortPriceDesc": "Qimmat → arzon",
     "sortPopular": "Ommabop",
-    "page": "Sahifa"
+    "page": "Sahifa",
+    "pageOf": "{page} / {total}",
+    "modelsCount": "{count} ta model"
   },
   "categoryIntro": {
     "abaya": "Abaya optom Toshkent — Oltinoy Collection abayalari o'z tikuv seximizda sifatli matolardan tikiladi. Optom narxlarda, 46–56 razmerlarda, ishlab chiqaruvchidan to'g'ridan-to'g'ri. Bek Barakadan O'zbekiston bo'ylab yetkazib beramiz — resellerlar uchun eng qulay shartlar.",
@@ -89,20 +150,34 @@
     "descriptionTemplate": "{name} optom narxlarda Oltinoy Collection'dan. O'z tikuv seximizdan, 46–56 razmerlar. Toshkent Bek Barakadan O'zbekiston bo'ylab yetkazib beramiz."
   },
   "product": {
-    "wholesalePrice": "OPTOM NARX",
+    "wholesalePrice": "Optom narx",
     "sku": "Artikul",
     "material": "Materiali",
     "sizes": "O'lchamlar",
+    "sizesShort": "Razmer",
     "minOrder": "Minimal buyurtma: {qty} dona",
     "inStock": "Sotuvda bor",
     "soldOut": "Sotildi",
     "hidden": "Yashirilgan",
     "new": "Yangi",
+    "sale": "Chegirma",
+    "availability": "Holati",
     "bookNow": "Bron qilish",
     "writeTelegram": "Telegram orqali yozish",
     "relatedTitle": "O'xshash mahsulotlar",
+    "relatedSubtitle": "Shu kategoriyadagi boshqa modellar.",
+    "details": "Mahsulot haqida",
     "breadcrumbHome": "Bosh sahifa",
-    "breadcrumbCatalog": "Katalog"
+    "breadcrumbCatalog": "Katalog",
+    "galleryPrev": "Oldingi rasm",
+    "galleryNext": "Keyingi rasm",
+    "galleryThumb": "{index}-rasm",
+    "galleryCounter": "{index} / {total}",
+    "trust": {
+      "workshop": "O'z sexmizda tikilgan",
+      "delivery": "Viloyatlarga yetkazib berish",
+      "quality": "Sifat kafolati"
+    }
   },
   "booking": {
     "title": "Bron qilish",
@@ -118,13 +193,14 @@
     "tgPlaceholder": "@username",
     "note": "Izoh (ixtiyoriy)",
     "notePlaceholder": "Qo'shimcha izoh…",
-    "submit": "📩 Bron qilish",
+    "submit": "Bron qilish",
     "submitting": "Yuborilmoqda…",
     "successTitle": "Broningiz qabul qilindi!",
     "successText": "Tez orada operatorimiz siz bilan bog'lanadi.",
     "successChannel": "Telegram kanalimizga obuna bo'ling",
     "errorGeneric": "Bron yuborilmadi. Birozdan so'ng qayta urinib ko'ring.",
     "errorRateLimit": "Juda ko'p urinish. Iltimos, birozdan so'ng qayta urinib ko'ring.",
+    "privacy": "Ma'lumotlaringiz faqat buyurtmani rasmiylashtirish uchun ishlatiladi.",
     "validation": {
       "size": "O'lchamni tanlang",
       "quantity": "Sonini kiriting",
@@ -135,7 +211,9 @@
   "contact": {
     "metaTitle": "Aloqa — Oltinoy Collection | Bek Baraka, Toshkent",
     "metaDescription": "Oltinoy Collection — hijob kiyimlar do'koni Toshkentda: Bek Baraka bozori, 12-qator, 473-do'kon. Telefon, Telegram va ish vaqti. Optom buyurtmalar uchun bron qoldiring.",
+    "kicker": "Bog'lanish",
     "title": "Aloqa",
+    "intro": "Optom buyurtma, hamkorlik yoki savolingiz bormi — qulay usulda bog'laning. Har kuni javob beramiz.",
     "address": "Manzil",
     "phone": "Telefon",
     "hours": "Ish vaqti",
@@ -143,21 +221,46 @@
     "telegram": "Telegram",
     "channel": "Telegram kanal",
     "orderVia": "Telegram orqali buyurtma",
-    "map": "Xaritada ko'rish"
+    "map": "Xaritada ko'rish",
+    "mapHint": "Bek Baraka bozori, 12-qator, 473-do'kon",
+    "fastest": "Eng tez javob",
+    "visitTitle": "Do'konga tashrif buyuring",
+    "visitText": "Modellarni jonli ko'rish uchun Bek Barakadagi do'konimizga keling — namunalarni qo'lda ushlab ko'rasiz."
   },
   "about": {
     "metaTitle": "Biz haqimizda — o'z tikuv sexi | Oltinoy Collection",
     "metaDescription": "Oltinoy Collection — Toshkentdagi o'z tikuv sexiga ega oilaviy brend. Ishlab chiqaruvchidan to'g'ridan-to'g'ri optom modest fashion. Bizning hikoyamiz.",
+    "kicker": "Bizning hikoyamiz",
     "title": "Biz haqimizda",
-    "lead": "Oltinoy Collection — ishlab chiqaruvchidan to'g'ridan-to'g'ri."
+    "lead": "Oltinoy Collection — Toshkentdagi o'z tikuv sexiga ega oilaviy brend. Biz modest fashion — abaya, ko'ylak va rumollarni to'g'ridan-to'g'ri ishlab chiqaruvchidan optom taqdim etamiz.",
+    "storyTitle": "Kichik ustaxonadan o'z sexigacha",
+    "valuesKicker": "Qadriyatlarimiz",
+    "valuesTitle": "Bizni nima ajratib turadi",
+    "numbersKicker": "Raqamlarda",
+    "numbers": {
+      "yearsValue": "100%",
+      "yearsLabel": "O'z sexida tikiladi",
+      "modelsValue": "Har hafta",
+      "modelsLabel": "Yangi kolleksiya",
+      "partnersValue": "46–56",
+      "partnersLabel": "Razmerlar qatori",
+      "regionsValue": "14",
+      "regionsLabel": "Viloyatga yetkazamiz"
+    },
+    "ctaTitle": "Hamkorlikni bugun boshlang",
+    "ctaText": "Katalogni ko'ring yoki to'g'ridan-to'g'ri Telegram orqali yozing — optom shartlarni birgalikda kelishamiz."
   },
   "blog": {
     "metaTitle": "Blog — modest fashion va optom savdo | Oltinoy Collection",
     "metaDescription": "Optom abaya va ko'ylak savdosi, modest fashion trendlari va foydali maslahatlar. Oltinoy Collection blogi — resellerlar uchun.",
+    "kicker": "Maqolalar",
     "title": "Blog",
+    "intro": "Optom savdo, modest fashion trendlari va reseller biznesini o'stirish bo'yicha amaliy maslahatlar.",
     "readMore": "Batafsil o'qish",
     "empty": "Hozircha maqolalar yo'q.",
-    "publishedOn": "Chop etilgan"
+    "publishedOn": "Chop etilgan",
+    "backToBlog": "Barcha maqolalar",
+    "featured": "Tanlangan maqola"
   },
   "footer": {
     "about": "O'z tikuv sexiga ega Toshkent brendi. Optom modest fashion — har hafta yangi kolleksiya.",
@@ -165,7 +268,9 @@
     "pages": "Sahifalar",
     "contact": "Aloqa",
     "rights": "Barcha huquqlar himoyalangan.",
-    "madeWith": "Ishlab chiqaruvchidan to'g'ridan-to'g'ri"
+    "madeWith": "Ishlab chiqaruvchidan to'g'ridan-to'g'ri",
+    "ctaTitle": "Optom hamkorlikni boshlaymizmi?",
+    "ctaText": "Katalogni ko'ring yoki Telegram orqali yozing — narx va shartlarni bir kunda kelishamiz."
   },
   "langSwitcher": {
     "label": "Til",
@@ -173,8 +278,10 @@
     "ru": "Русский"
   },
   "notFound": {
+    "kicker": "Xatolik 404",
     "title": "Sahifa topilmadi",
-    "text": "Kechirasiz, siz qidirgan sahifa mavjud emas.",
-    "cta": "Bosh sahifaga qaytish"
+    "text": "Kechirasiz, siz qidirgan sahifa mavjud emas yoki ko'chirilgan.",
+    "cta": "Bosh sahifaga qaytish",
+    "ctaCatalog": "Katalogga o'tish"
   }
 }

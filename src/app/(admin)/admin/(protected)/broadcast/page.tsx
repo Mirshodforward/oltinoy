@@ -12,13 +12,18 @@ export default async function AdminBroadcastPage() {
   });
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold">Broadcast</h1>
-      <div className="seam mt-3 w-24" aria-hidden="true" />
-      <p className="mt-3 text-sm" style={{ color: "var(--color-muted)" }}>
-        Barcha aktiv Telegram obunachilariga xabar yuboring (~20 msg/sek). Bloklagan foydalanuvchilar avtomatik o'chiriladi.
-      </p>
-      <div className="mt-6">
+    <div className="max-w-4xl">
+      {/* ───────────────────────── Header ───────────────────────── */}
+      <header className="max-w-2xl">
+        <h1 className="text-3xl">Broadcast</h1>
+        <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--fg-muted)" }}>
+          Barcha aktiv Telegram obunachilariga xabar yuboring (~20 msg/sek). Bloklagan foydalanuvchilar avtomatik
+          o'chiriladi.
+        </p>
+      </header>
+      <div className="seam mt-6" aria-hidden="true" />
+
+      <div className="mt-8">
         <BroadcastForm products={products} />
       </div>
     </div>

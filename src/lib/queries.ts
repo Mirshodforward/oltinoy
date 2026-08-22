@@ -12,9 +12,11 @@ export const productCardSelect = {
   status: true,
   isNew: true,
   category: { select: { nameUz: true, nameRu: true } },
+  // Two images: the card cross-fades to the second on hover — in fashion the
+  // back/detail shot is what actually sells the model.
   images: {
     orderBy: { sortOrder: "asc" as const },
-    take: 1,
+    take: 2,
     select: { fileName: true, altUz: true, altRu: true },
   },
 } satisfies Prisma.ProductSelect;
@@ -39,6 +41,22 @@ export async function getActiveCategories() {
       where: { isActive: true },
       orderBy: { sortOrder: "asc" },
       include: { _count: { select: { products: { where: { status: { not: "HIDDEN" } } } } } },
+    });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Categories for the catalogue rail. Deliberately lighter than
+ * `getActiveCategories` — the rail shows no counts, so it skips the join.
+ */
+export async function getRailCategories() {
+  try {
+    return await db.category.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+      select: { id: true, slug: true, nameUz: true, nameRu: true },
     });
   } catch {
     return [];

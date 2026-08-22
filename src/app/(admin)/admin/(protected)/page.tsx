@@ -1,20 +1,93 @@
+import type { ReactElement } from "react";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { formatPrice } from "@/lib/format";
+import {
+  ArrowRight,
+  Bag,
+  CheckCircle,
+  Eye,
+  Inbox,
+  Moon,
+  Plus,
+  TrendingUp,
+  type IconProps,
+} from "@/components/ui/icons";
 
 export const dynamic = "force-dynamic";
 
-function StatCard({ label, value, hint }: { label: string; value: string | number; hint?: string }) {
+const STATUS_UZ: Record<string, string> = {
+  NEW: "Yangi",
+  CONFIRMED: "Tasdiqlangan",
+  CONTACTED: "Bog'lanilgan",
+  COMPLETED: "Yakunlangan",
+  CANCELLED: "Bekor",
+};
+
+/** Gold for the fresh ones, ink for the closed ones, soft for everything between. */
+const STATUS_BADGE: Record<string, string> = {
+  NEW: "badge-new",
+  CONFIRMED: "badge-soft",
+  CONTACTED: "badge-soft",
+  COMPLETED: "badge-sold",
+  CANCELLED: "badge-soft",
+};
+
+const STATUS_TINT: Record<string, string | undefined> = {
+  CONFIRMED: "var(--color-sage)",
+  CANCELLED: "var(--color-danger)",
+};
+
+/**
+ * One measurement: the number set in the display face (the same treatment the
+ * storefront gives a price), a small-caps label, the glyph in a soft cream disc
+ * and the seam stitched across the top edge of the tile.
+ */
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: (p: IconProps) => ReactElement;
+  label: string;
+  value: string | number;
+  hint?: string;
+}) {
   return (
     <div className="card p-5">
-      <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-bronze)" }}>
-        {label}
-      </div>
-      <div className="price mt-1 text-3xl font-semibold">{value}</div>
-      {hint && (
-        <div className="mt-1 text-xs" style={{ color: "var(--color-muted)" }}>
-          {hint}
+      <span className="seam absolute inset-x-0 top-0" aria-hidden="true" />
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-2xs font-bold uppercase tracking-[0.16em]" style={{ color: "var(--fg-muted)" }}>
+            {label}
+          </p>
+          <p className="price mt-2 text-3xl">{value}</p>
+          {hint && (
+            <p className="mt-1 text-xs" style={{ color: "var(--fg-subtle)" }}>
+              {hint}
+            </p>
+          )}
         </div>
-      )}
+        <span
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+          style={{ background: "var(--color-cream)", color: "var(--color-gold-dk)" }}
+        >
+          <Icon size={19} />
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/** Inside an already-bordered card an empty list is a centred moon plus a line. */
+function EmptyLine({ text }: { text: string }) {
+  return (
+    <div className="py-10 text-center">
+      <Moon size={26} className="mx-auto text-gold" />
+      <p className="mt-3 text-sm" style={{ color: "var(--fg-muted)" }}>
+        {text}
+      </p>
     </div>
   );
 }
@@ -37,64 +110,104 @@ export default async function AdminDashboard() {
   for (const r of todayByStatus) counts[r.status] = r._count._all;
   const todayTotal = Object.values(counts).reduce((a, b) => a + b, 0);
 
-  const statusUz: Record<string, string> = {
-    NEW: "Yangi",
-    CONFIRMED: "Tasdiqlangan",
-    CONTACTED: "Bog'lanilgan",
-    COMPLETED: "Yakunlangan",
-    CANCELLED: "Bekor",
-  };
-
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Boshqaruv paneli</h1>
-      <div className="seam mt-3 w-24" aria-hidden="true" />
+      {/* ───────────────────────── Header ───────────────────────── */}
+      <header className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="max-w-2xl">
+          <h1 className="text-3xl">Boshqaruv paneli</h1>
+          <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--fg-muted)" }}>
+            Bugungi bronlar, haftalik dinamika va eng ko'p ko'rilgan modellar.
+          </p>
+        </div>
+        <Link href="/admin/mahsulotlar/yangi" className="btn btn-primary">
+          <Plus size={17} />
+          Yangi mahsulot
+        </Link>
+      </header>
+      <div className="seam mt-6" aria-hidden="true" />
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Bugungi bronlar" value={todayTotal} hint={`Yangi: ${counts.NEW ?? 0}`} />
-        <StatCard label="Hafta bronlari" value={weekCount} hint="So'nggi 7 kun" />
-        <StatCard label="Aktiv mahsulotlar" value={activeProducts} />
-        <StatCard label="Tasdiqlangan (bugun)" value={counts.CONFIRMED ?? 0} />
+      {/* ───────────────────────── Measurements ───────────────────────── */}
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard icon={Inbox} label="Bugungi bronlar" value={todayTotal} hint={`Yangi: ${counts.NEW ?? 0}`} />
+        <StatCard icon={TrendingUp} label="Hafta bronlari" value={weekCount} hint="So'nggi 7 kun" />
+        <StatCard icon={Bag} label="Aktiv mahsulotlar" value={activeProducts} />
+        <StatCard icon={CheckCircle} label="Tasdiqlangan (bugun)" value={counts.CONFIRMED ?? 0} />
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <section className="card p-5">
-          <h2 className="text-lg font-semibold">Eng ko'p ko'rilgan mahsulotlar</h2>
-          <ul className="mt-3 divide-y" style={{ borderColor: "var(--color-line)" }}>
-            {topViewed.length === 0 && <li className="py-3 text-sm" style={{ color: "var(--color-muted)" }}>Ma'lumot yo'q</li>}
-            {topViewed.map((p) => (
-              <li key={p.id} className="flex items-center justify-between py-2.5 text-sm">
-                <Link href={`/admin/mahsulotlar/${p.id}`} className="truncate pr-3 hover:text-[var(--color-bronze)]">
-                  {p.nameUz}
-                </Link>
-                <span className="shrink-0 tabular-nums" style={{ color: "var(--color-muted)" }}>
-                  👁 {p.viewCount}
-                </span>
-              </li>
-            ))}
-          </ul>
+      {/* ──────────────────── Two lists, side by side ──────────────────── */}
+      <div className="mt-8 grid gap-5 lg:grid-cols-2">
+        <section className="card p-5 md:p-6">
+          <div className="flex items-center gap-2.5">
+            <TrendingUp size={18} style={{ color: "var(--color-gold-dk)" }} />
+            <h2 className="text-xl">Eng ko'p ko'rilgan mahsulotlar</h2>
+          </div>
+          <div className="hairline mt-4" />
+
+          {topViewed.length === 0 ? (
+            <EmptyLine text="Ma'lumot yo'q" />
+          ) : (
+            <ul className="divide-y" style={{ borderColor: "var(--line)" }}>
+              {topViewed.map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-3 py-3">
+                  <div className="min-w-0">
+                    <Link
+                      href={`/admin/mahsulotlar/${p.id}`}
+                      className="block truncate text-sm font-semibold transition-colors duration-200 hover:text-gold-dk"
+                    >
+                      {p.nameUz}
+                    </Link>
+                    <span className="price text-xs" style={{ color: "var(--fg-muted)" }}>
+                      {formatPrice(p.price)}
+                    </span>
+                  </div>
+                  <span
+                    className="inline-flex shrink-0 items-center gap-1.5 text-sm tabular-nums"
+                    style={{ color: "var(--fg-muted)" }}
+                  >
+                    <Eye size={15} title="Ko'rishlar" />
+                    {p.viewCount}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
-        <section className="card p-5">
-          <h2 className="text-lg font-semibold">So'nggi bronlar</h2>
-          <ul className="mt-3 divide-y" style={{ borderColor: "var(--color-line)" }}>
-            {latestBookings.length === 0 && <li className="py-3 text-sm" style={{ color: "var(--color-muted)" }}>Bronlar yo'q</li>}
-            {latestBookings.map((b) => (
-              <li key={b.id} className="flex items-center justify-between py-2.5 text-sm">
-                <div className="min-w-0 pr-3">
-                  <div className="truncate font-medium">{b.product.nameUz}</div>
-                  <div className="text-xs" style={{ color: "var(--color-muted)" }}>
-                    {b.customerName} · {b.phone}
+        <section className="card p-5 md:p-6">
+          <div className="flex items-center gap-2.5">
+            <Inbox size={18} style={{ color: "var(--color-gold-dk)" }} />
+            <h2 className="text-xl">So'nggi bronlar</h2>
+          </div>
+          <div className="hairline mt-4" />
+
+          {latestBookings.length === 0 ? (
+            <EmptyLine text="Bronlar yo'q" />
+          ) : (
+            <ul className="divide-y" style={{ borderColor: "var(--line)" }}>
+              {latestBookings.map((b) => (
+                <li key={b.id} className="flex items-center justify-between gap-3 py-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-semibold">{b.product.nameUz}</p>
+                    <p className="truncate text-xs" style={{ color: "var(--fg-muted)" }}>
+                      {b.customerName} · {b.phone}
+                    </p>
                   </div>
-                </div>
-                <span className="shrink-0 rounded-full px-2 py-0.5 text-xs" style={{ background: "var(--color-ivory-deep)" }}>
-                  {statusUz[b.status]}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <Link href="/admin/bronlar" className="mt-3 inline-block text-sm font-semibold" style={{ color: "var(--color-bronze)" }}>
-            Barcha bronlar →
+                  <span
+                    className={`badge ${STATUS_BADGE[b.status] ?? "badge-soft"} shrink-0`}
+                    style={{ color: STATUS_TINT[b.status] }}
+                  >
+                    {STATUS_UZ[b.status]}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="hairline mt-2" />
+          <Link href="/admin/bronlar" className="link-seam mt-4 inline-flex items-center gap-1.5 text-sm">
+            Barcha bronlar
+            <ArrowRight size={16} />
           </Link>
         </section>
       </div>

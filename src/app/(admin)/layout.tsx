@@ -8,10 +8,12 @@ export const metadata: Metadata = {
 };
 
 // Admin is always Uzbek and outside the i18n tree; it renders its own shell.
+// Ground and text come from the design tokens, so the panel keeps the same
+// ivory/espresso temperature as the storefront.
 export default function AdminRootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="uz" className={`${fraunces.variable} ${manrope.variable}`}>
-      <body style={{ background: "var(--color-ivory)", color: "var(--color-ink)" }}>{children}</body>
+      <body className="bg-ivory text-ink">{children}</body>
     </html>
   );
 }

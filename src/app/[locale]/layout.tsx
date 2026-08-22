@@ -9,6 +9,7 @@ import { fraunces, manrope } from "../fonts";
 import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import { JsonLd, organizationSchema, websiteSchema } from "@/components/seo/JsonLd";
+import { SkipLink } from "@/components/ui/SkipLink";
 import { getSettings } from "@/lib/settings";
 import { SITE_URL, BRAND } from "@/lib/seo";
 import { env } from "@/lib/env";
@@ -57,12 +58,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider>
           <JsonLd data={organizationSchema(settings)} />
           <JsonLd data={websiteSchema()} />
-          <a
-            href="#main"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-white focus:px-4 focus:py-2"
-          >
-            →
-          </a>
+          <SkipLink />
           <Header />
           <main id="main" className="flex-1">
             {children}

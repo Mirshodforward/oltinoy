@@ -1,10 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { imageUrl, productImageLoader } from "@/lib/images";
 import { saveProduct, postProductChannel } from "@/app/(admin)/admin/(protected)/mahsulotlar/actions";
+import {
+  AlertCircle,
+  Check,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  ImageIcon,
+  Megaphone,
+  Repeat,
+  Trash,
+} from "@/components/ui/icons";
 
 const ALL_SIZES = ["46", "48", "50", "52", "54", "56"];
 
@@ -32,9 +43,71 @@ export type ProductInitial = {
   alreadyPosted: boolean;
 };
 
+/**
+ * One labelled block of the form. Twelve fields in a single column is a wall;
+ * five short cards each announced by a kicker is a checklist you can finish.
+ */
+function Section({ kicker, hint, children }: { kicker: string; hint?: string; children: ReactNode }) {
+  return (
+    <section className="card p-5 md:p-6">
+      <h2 className="kicker">{kicker}</h2>
+      {hint && (
+        <p className="mt-2 text-sm" style={{ color: "var(--fg-muted)" }}>
+          {hint}
+        </p>
+      )}
+      <div className="mt-5">{children}</div>
+    </section>
+  );
+}
+
+/**
+ * The native checkbox stays the control (it is the peer); the gold box next to
+ * it is the visible state. The whole row is a 44px tap target.
+ */
+function CheckboxRow({
+  id,
+  name,
+  checked,
+  onChange,
+  label,
+  hint,
+}: {
+  id: string;
+  name: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+  hint?: string;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="flex min-h-11 cursor-pointer items-center gap-3">
+        <input
+          id={id}
+          name={name}
+          type="checkbox"
+          className="peer sr-only"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+        />
+        <span
+          aria-hidden="true"
+          className="flex h-6 w-6 flex-none items-center justify-center rounded-xs border border-sand bg-paper text-transparent transition-colors duration-200 peer-checked:border-gold peer-checked:bg-gold peer-checked:text-ink peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold"
+        >
+          <Check size={15} />
+        </span>
+        <span className="text-sm font-semibold">{label}</span>
+      </label>
+      {hint && <p className="field-hint">{hint}</p>}
+    </div>
+  );
+}
+
 export function ProductForm({ categories, initial }: { categories: Category[]; initial?: ProductInitial }) {
   const router = useRouter();
   const isEdit = Boolean(initial);
+  const uid = useId();
 
   const [nameUz, setNameUz] = useState(initial?.nameUz ?? "");
   const [nameRu, setNameRu] = useState(initial?.nameRu ?? "");
@@ -59,6 +132,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [alreadyPosted, setAlreadyPosted] = useState(initial?.alreadyPosted ?? false);
+  const [dragging, setDragging] = useState(false);
 
   function toggleSize(s: string) {
     setSizes((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s].sort()));
@@ -143,7 +217,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
       }
 
       if (res.channelPosted) {
-        setNotice("Mahsulot saqlandi va kanalga joylandi ✅");
+        setNotice("Mahsulot saqlandi va kanalga joylandi");
       } else if (res.channelError) {
         setNotice(`Saqlandi, lekin kanalga joylanmadi: ${res.channelError}`);
       }
@@ -158,7 +232,7 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
           router.refresh();
           return;
         }
-        setNotice("Mahsulot saqlandi va kanalga joylandi ✅");
+        setNotice("Mahsulot saqlandi va kanalga joylandi");
       }
 
       router.push(isEdit ? `/admin/mahsulotlar/${res.id}` : "/admin/mahsulotlar");
@@ -177,162 +251,422 @@ export function ProductForm({ categories, initial }: { categories: Category[]; i
     setNotice("");
     const pr = await postProductChannel(initial.id, true);
     setPosting(false);
-    setNotice(pr.ok ? "Kanalga qayta joylandi ✅" : `Xatolik: ${pr.error}`);
+    setNotice(pr.ok ? "Kanalga qayta joylandi" : `Xatolik: ${pr.error}`);
     if (pr.ok) setAlreadyPosted(true);
     router.refresh();
   }
 
-  const inputCls = "field-input";
-
   return (
-    <div className="space-y-6">
-      {error && <p className="rounded-md px-3 py-2 text-sm" style={{ background: "#fef2f2", color: "#b91c1c" }} role="alert">{error}</p>}
-      {notice && <p className="rounded-md px-3 py-2 text-sm" style={{ background: "#ecfdf5", color: "var(--color-sage)" }}>{notice}</p>}
-
-      <div className="grid gap-5 md:grid-cols-2">
-        <div>
-          <label className="field-label">Nomi (UZ) *</label>
-          <input className={inputCls} value={nameUz} onChange={(e) => setNameUz(e.target.value)} />
-        </div>
-        <div>
-          <label className="field-label">Nomi (RU) *</label>
-          <input className={inputCls} value={nameRu} onChange={(e) => setNameRu(e.target.value)} />
-        </div>
-        <div>
-          <label className="field-label">Slug (bo'sh qoldirilsa avtomatik)</label>
-          <input className={inputCls} value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="avto-generatsiya" />
-          {isEdit && <p className="mt-1 text-xs" style={{ color: "#b45309" }}>⚠️ E'lon qilingandan keyin slugni o'zgartirmang (SEO).</p>}
-        </div>
-        <div>
-          <label className="field-label">SKU (artikul)</label>
-          <input className={inputCls} value={sku} onChange={(e) => setSku(e.target.value)} placeholder="A-102" />
-        </div>
-      </div>
-
-      <div className="grid gap-5 md:grid-cols-3">
-        <div>
-          <label className="field-label">Narx (so'm) *</label>
-          <input type="number" inputMode="numeric" className={inputCls} value={price} onChange={(e) => setPrice(e.target.value)} />
-        </div>
-        <div>
-          <label className="field-label">Eski narx (ixtiyoriy)</label>
-          <input type="number" inputMode="numeric" className={inputCls} value={oldPrice} onChange={(e) => setOldPrice(e.target.value)} />
-        </div>
-        <div>
-          <label className="field-label">Min. buyurtma</label>
-          <input type="number" inputMode="numeric" min={1} className={inputCls} value={minOrderQty} onChange={(e) => setMinOrderQty(e.target.value)} />
-        </div>
-      </div>
-
-      <div className="grid gap-5 md:grid-cols-2">
-        <div>
-          <label className="field-label">Materiali (UZ)</label>
-          <input className={inputCls} value={materialUz} onChange={(e) => setMaterialUz(e.target.value)} />
-        </div>
-        <div>
-          <label className="field-label">Materiali (RU)</label>
-          <input className={inputCls} value={materialRu} onChange={(e) => setMaterialRu(e.target.value)} />
-        </div>
-        <div>
-          <label className="field-label">Tavsif (UZ)</label>
-          <textarea rows={3} className={`${inputCls} resize-none`} value={descriptionUz} onChange={(e) => setDescriptionUz(e.target.value)} />
-        </div>
-        <div>
-          <label className="field-label">Tavsif (RU)</label>
-          <textarea rows={3} className={`${inputCls} resize-none`} value={descriptionRu} onChange={(e) => setDescriptionRu(e.target.value)} />
-        </div>
-      </div>
-
-      <div className="grid gap-5 md:grid-cols-3">
-        <div>
-          <label className="field-label">Kategoriya *</label>
-          <select className={inputCls} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>{c.nameUz}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="field-label">Holati</label>
-          <select className={inputCls} value={status} onChange={(e) => setStatus(e.target.value as ProductInitial["status"])}>
-            <option value="ACTIVE">Sotuvda (ACTIVE)</option>
-            <option value="SOLD_OUT">Sotilgan (SOLD_OUT)</option>
-            <option value="HIDDEN">Yashirin (HIDDEN)</option>
-          </select>
-        </div>
-        <div className="flex items-end">
-          <label className="flex items-center gap-2 pb-2 text-sm font-medium">
-            <input type="checkbox" checked={isNew} onChange={(e) => setIsNew(e.target.checked)} />
-            "Yangi" belgisi
-          </label>
-        </div>
-      </div>
-
-      <fieldset>
-        <legend className="field-label">O'lchamlar *</legend>
-        <div className="flex flex-wrap gap-1.5">
-          {ALL_SIZES.map((s) => {
-            const active = sizes.includes(s);
-            return (
-              <button key={s} type="button" onClick={() => toggleSize(s)} aria-pressed={active}
-                className="min-w-[44px] rounded-full border px-3 py-2 text-sm font-medium"
-                style={{ borderColor: active ? "var(--color-gold)" : "var(--color-line)", background: active ? "var(--color-gold)" : "#fff" }}>
-                {s}
-              </button>
-            );
-          })}
-        </div>
-      </fieldset>
-
-      {/* Images */}
-      <div>
-        <label className="field-label">Rasmlar (birinchisi asosiy, {images.length}/10)</label>
-        <div className="mt-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {images.map((img, i) => (
-            <div key={img.fileName} className="card p-2">
-              <div className="relative aspect-[3/4] overflow-hidden rounded-md bg-[var(--color-ivory-deep)]">
-                <Image loader={productImageLoader} src={imageUrl(img.fileName, "sm", "webp")} alt="" fill sizes="200px" className="object-cover" />
-                {i === 0 && <span className="badge badge-new absolute left-1 top-1">Asosiy</span>}
-              </div>
-              <div className="mt-2 flex items-center justify-between gap-1">
-                <div className="flex gap-1">
-                  <button type="button" onClick={() => move(i, -1)} disabled={i === 0} className="rounded border px-2 py-1 text-xs disabled:opacity-40">↑</button>
-                  <button type="button" onClick={() => move(i, 1)} disabled={i === images.length - 1} className="rounded border px-2 py-1 text-xs disabled:opacity-40">↓</button>
-                </div>
-                <button type="button" onClick={() => removeImage(i)} className="rounded border px-2 py-1 text-xs" style={{ color: "#b91c1c" }}>O'chirish</button>
-              </div>
-              <input className="field-input mt-2 text-xs" placeholder="Alt (UZ)" value={img.altUz} onChange={(e) => setAlt(i, "altUz", e.target.value)} />
-              <input className="field-input mt-1 text-xs" placeholder="Alt (RU)" value={img.altRu} onChange={(e) => setAlt(i, "altRu", e.target.value)} />
-            </div>
-          ))}
-        </div>
-        <label className="btn btn-outline mt-3 cursor-pointer">
-          {uploading ? "Yuklanmoqda…" : "＋ Rasm qo'shish"}
-          <input type="file" accept="image/jpeg,image/png,image/webp" multiple hidden disabled={uploading} onChange={(e) => onUpload(e.target.files)} />
-        </label>
-      </div>
-
-      {/* Actions */}
-      <div className="flex flex-wrap gap-3 border-t pt-5" style={{ borderColor: "var(--color-line)" }}>
-        <button type="button" onClick={() => submit(false)} disabled={saving} className="btn btn-primary">
-          {saving && !posting ? "Saqlanmoqda…" : isEdit ? "Saqlash" : "Saqlash (kanalga avtomatik 📣)"}
-        </button>
-        {!isEdit && images.length === 0 && (
-          <p className="self-center text-xs" style={{ color: "var(--color-muted)" }}>
-            Kanalga joylash uchun kamida 1 ta rasm qo&apos;shing
+    <div className="space-y-4">
+      {/* ───────────────────── Status messages ───────────────────── */}
+      {error && (
+        <p
+          role="alert"
+          className="flex items-start gap-2.5 rounded-sm border border-danger/35 bg-danger/10 px-4 py-3 text-sm font-semibold text-danger"
+        >
+          <AlertCircle size={18} className="mt-px flex-none" />
+          {error}
+        </p>
+      )}
+      {/* The channel result arrives after the save round-trip — announce it. */}
+      <div aria-live="polite" className="empty:hidden">
+        {notice && (
+          <p className="flex items-start gap-2.5 rounded-sm border border-sage/35 bg-sage/10 px-4 py-3 text-sm font-semibold text-sage">
+            <CheckCircle size={18} className="mt-px flex-none" />
+            {notice}
           </p>
         )}
-        {isEdit && !alreadyPosted && (
-          <button type="button" onClick={() => submit(true)} disabled={saving} className="btn btn-gold" title="Kanalga birinchi marta joylash">
-            {posting ? "Joylanmoqda…" : "Kanalga joylash 📣"}
-          </button>
-        )}
-        {isEdit && alreadyPosted && (
-          <button type="button" onClick={repost} disabled={posting} className="btn btn-outline" title="Kanalga qayta e'lon qilish">
-            {posting ? "Joylanmoqda…" : "Qayta e'lon qilish 🔁"}
-          </button>
-        )}
       </div>
+
+      {/* ───────────────────────── Basics ───────────────────────── */}
+      <Section kicker="Asosiy" hint="Kartochkada va kanalda ko'rinadigan nom, artikul va kategoriya.">
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label className="field-label" htmlFor={`${uid}-nameUz`}>
+              Nomi (UZ) *
+            </label>
+            <input
+              id={`${uid}-nameUz`}
+              name="nameUz"
+              className="field-input"
+              value={nameUz}
+              onChange={(e) => setNameUz(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="field-label" htmlFor={`${uid}-nameRu`}>
+              Nomi (RU) *
+            </label>
+            <input
+              id={`${uid}-nameRu`}
+              name="nameRu"
+              className="field-input"
+              value={nameRu}
+              onChange={(e) => setNameRu(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="field-label" htmlFor={`${uid}-sku`}>
+              SKU (artikul)
+            </label>
+            <input
+              id={`${uid}-sku`}
+              name="sku"
+              className="field-input"
+              value={sku}
+              onChange={(e) => setSku(e.target.value)}
+              placeholder="A-102"
+            />
+          </div>
+          <div>
+            <label className="field-label" htmlFor={`${uid}-categoryId`}>
+              Kategoriya *
+            </label>
+            <select
+              id={`${uid}-categoryId`}
+              name="categoryId"
+              className="field-input"
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+            >
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nameUz}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────────────────── Pricing & sizes ───────────────────── */}
+      <Section kicker="Narx va o'lchamlar" hint="Optom narx so'mda. Eski narx kiritilsa, kartochkada chegirma ko'rinadi.">
+        <div className="grid gap-5 md:grid-cols-3">
+          <div>
+            <label className="field-label" htmlFor={`${uid}-price`}>
+              Narx (so'm) *
+            </label>
+            <input
+              id={`${uid}-price`}
+              name="price"
+              type="number"
+              inputMode="numeric"
+              className="field-input"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="field-label" htmlFor={`${uid}-oldPrice`}>
+              Eski narx (ixtiyoriy)
+            </label>
+            <input
+              id={`${uid}-oldPrice`}
+              name="oldPrice"
+              type="number"
+              inputMode="numeric"
+              className="field-input"
+              value={oldPrice}
+              onChange={(e) => setOldPrice(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="field-label" htmlFor={`${uid}-minOrderQty`}>
+              Min. buyurtma
+            </label>
+            <input
+              id={`${uid}-minOrderQty`}
+              name="minOrderQty"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              className="field-input"
+              value={minOrderQty}
+              onChange={(e) => setMinOrderQty(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <fieldset className="mt-6">
+          <legend className="field-label">O'lchamlar *</legend>
+          <div className="flex flex-wrap gap-2">
+            {ALL_SIZES.map((s) => (
+              <button key={s} type="button" onClick={() => toggleSize(s)} aria-pressed={sizes.includes(s)} className="chip">
+                {s}
+              </button>
+            ))}
+          </div>
+          <p className="field-hint">Tanlangan o'lchamlar bron formasida chiqadi — kamida bittasi kerak.</p>
+        </fieldset>
+      </Section>
+
+      {/* ───────────────────── Copy (uz / ru) ───────────────────── */}
+      <Section kicker="Tavsif" hint="Material va tavsif ikkala tilda — mahsulot sahifasida shu matn chiqadi.">
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label className="field-label" htmlFor={`${uid}-materialUz`}>
+              Materiali (UZ)
+            </label>
+            <input
+              id={`${uid}-materialUz`}
+              name="materialUz"
+              className="field-input"
+              value={materialUz}
+              onChange={(e) => setMaterialUz(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="field-label" htmlFor={`${uid}-materialRu`}>
+              Materiali (RU)
+            </label>
+            <input
+              id={`${uid}-materialRu`}
+              name="materialRu"
+              className="field-input"
+              value={materialRu}
+              onChange={(e) => setMaterialRu(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="field-label" htmlFor={`${uid}-descriptionUz`}>
+              Tavsif (UZ)
+            </label>
+            <textarea
+              id={`${uid}-descriptionUz`}
+              name="descriptionUz"
+              rows={4}
+              className="field-input resize-y"
+              value={descriptionUz}
+              onChange={(e) => setDescriptionUz(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="field-label" htmlFor={`${uid}-descriptionRu`}>
+              Tavsif (RU)
+            </label>
+            <textarea
+              id={`${uid}-descriptionRu`}
+              name="descriptionRu"
+              rows={4}
+              className="field-input resize-y"
+              value={descriptionRu}
+              onChange={(e) => setDescriptionRu(e.target.value)}
+            />
+          </div>
+        </div>
+      </Section>
+
+      {/* ───────────────────────── Images ───────────────────────── */}
+      <Section kicker="Rasmlar" hint={`Birinchisi asosiy — kartochkada va kanalda o'sha ishlatiladi. ${images.length}/10`}>
+        {images.length > 0 && (
+          <ul className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {images.map((img, i) => (
+              <li key={img.fileName} className="card p-2.5">
+                <div className="relative aspect-[3/4] overflow-hidden rounded-sm bg-cream">
+                  <Image
+                    loader={productImageLoader}
+                    src={imageUrl(img.fileName, "sm", "webp")}
+                    alt=""
+                    fill
+                    sizes="200px"
+                    className="object-cover"
+                  />
+                  {i === 0 && <span className="badge badge-new absolute left-2 top-2">Asosiy</span>}
+                  <button
+                    type="button"
+                    onClick={() => removeImage(i)}
+                    aria-label={`${i + 1}-rasmni o'chirish`}
+                    className="absolute right-1.5 top-1.5 flex h-11 w-11 items-center justify-center rounded-full bg-ink/70 text-ivory backdrop-blur transition-colors duration-200 hover:bg-danger"
+                  >
+                    <Trash size={17} />
+                  </button>
+                </div>
+
+                <div className="mt-2.5 flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => move(i, -1)}
+                    disabled={i === 0}
+                    aria-label={`${i + 1}-rasmni oldinga surish`}
+                    className="btn btn-ghost btn-sm px-2.5"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => move(i, 1)}
+                    disabled={i === images.length - 1}
+                    aria-label={`${i + 1}-rasmni orqaga surish`}
+                    className="btn btn-ghost btn-sm px-2.5"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                  <span className="ml-auto text-2xs font-bold tracking-[0.14em]" style={{ color: "var(--fg-subtle)" }}>
+                    {i + 1}/{images.length}
+                  </span>
+                </div>
+
+                <label className="sr-only" htmlFor={`${uid}-altuz-${img.fileName}`}>
+                  {i + 1}-rasm alt matni (UZ)
+                </label>
+                <input
+                  id={`${uid}-altuz-${img.fileName}`}
+                  className="field-input mt-2 text-sm"
+                  placeholder="Alt (UZ)"
+                  value={img.altUz}
+                  onChange={(e) => setAlt(i, "altUz", e.target.value)}
+                />
+                <label className="sr-only" htmlFor={`${uid}-altru-${img.fileName}`}>
+                  {i + 1}-rasm alt matni (RU)
+                </label>
+                <input
+                  id={`${uid}-altru-${img.fileName}`}
+                  className="field-input mt-1.5 text-sm"
+                  placeholder="Alt (RU)"
+                  value={img.altRu}
+                  onChange={(e) => setAlt(i, "altRu", e.target.value)}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Drop target and file picker are the same label — one obvious place. */}
+        <label
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragging(true);
+          }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDragging(false);
+            void onUpload(e.dataTransfer.files);
+          }}
+          className={[
+            "flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-md border border-dashed px-5 py-9 text-center transition-colors duration-200",
+            "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-gold",
+            dragging ? "border-gold bg-gold/10" : "border-sand hover:border-gold hover:bg-cream/60",
+          ].join(" ")}
+        >
+          <ImageIcon size={26} style={{ color: "var(--color-gold-dk)" }} />
+          <span className="text-sm font-semibold">{uploading ? "Yuklanmoqda…" : "Rasm qo'shish"}</span>
+          <span className="text-xs" style={{ color: "var(--fg-subtle)" }}>
+            Bosing yoki fayllarni shu yerga tashlang · JPEG, PNG, WebP
+          </span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            className="sr-only"
+            disabled={uploading}
+            onChange={(e) => onUpload(e.target.files)}
+          />
+        </label>
+      </Section>
+
+      {/* ───────────────────────── SEO / slug ───────────────────────── */}
+      <Section kicker="SEO" hint="Manzil qatoridagi havola. Bo'sh qoldirilsa nomdan avtomatik yasaladi.">
+        <div className="md:max-w-md">
+          <label className="field-label" htmlFor={`${uid}-slug`}>
+            Slug
+          </label>
+          <input
+            id={`${uid}-slug`}
+            name="slug"
+            className="field-input"
+            value={slug}
+            onChange={(e) => setSlug(e.target.value)}
+            placeholder="avto-generatsiya"
+          />
+          {isEdit && (
+            <p className="field-hint flex items-center gap-1.5" style={{ color: "var(--color-rose-dk)" }}>
+              <AlertCircle size={14} className="flex-none" />
+              E'lon qilingandan keyin slugni o'zgartirmang (SEO).
+            </p>
+          )}
+        </div>
+      </Section>
+
+      {/* ───────────────────── Publishing & actions ───────────────────── */}
+      <Section kicker="Chop etish" hint="Holat saytdagi ko'rinishni belgilaydi; kanalga joylash Telegramga e'lon yuboradi.">
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label className="field-label" htmlFor={`${uid}-status`}>
+              Holati
+            </label>
+            <select
+              id={`${uid}-status`}
+              name="status"
+              className="field-input"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ProductInitial["status"])}
+            >
+              <option value="ACTIVE">Sotuvda (ACTIVE)</option>
+              <option value="SOLD_OUT">Sotilgan (SOLD_OUT)</option>
+              <option value="HIDDEN">Yashirin (HIDDEN)</option>
+            </select>
+          </div>
+          <div className="flex items-end pb-1.5">
+            <CheckboxRow
+              id={`${uid}-isNew`}
+              name="isNew"
+              checked={isNew}
+              onChange={setIsNew}
+              label={`"Yangi" belgisi`}
+            />
+          </div>
+        </div>
+
+        <div className="hairline my-6" />
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button type="button" onClick={() => submit(false)} disabled={saving} className="btn btn-primary">
+            {saving && !posting ? (
+              "Saqlanmoqda…"
+            ) : isEdit ? (
+              "Saqlash"
+            ) : (
+              <>
+                <Megaphone size={17} />
+                Saqlash (kanalga avtomatik)
+              </>
+            )}
+          </button>
+
+          {isEdit && !alreadyPosted && (
+            <button
+              type="button"
+              onClick={() => submit(true)}
+              disabled={saving}
+              className="btn btn-gold"
+              title="Kanalga birinchi marta joylash"
+            >
+              <Megaphone size={17} />
+              {posting ? "Joylanmoqda…" : "Kanalga joylash"}
+            </button>
+          )}
+
+          {isEdit && alreadyPosted && (
+            <button
+              type="button"
+              onClick={repost}
+              disabled={posting}
+              className="btn btn-outline"
+              title="Kanalga qayta e'lon qilish"
+            >
+              <Repeat size={17} />
+              {posting ? "Joylanmoqda…" : "Qayta e'lon qilish"}
+            </button>
+          )}
+
+          {!isEdit && images.length === 0 && (
+            <p className="text-xs" style={{ color: "var(--fg-muted)" }}>
+              Kanalga joylash uchun kamida 1 ta rasm qo&apos;shing
+            </p>
+          )}
+        </div>
+      </Section>
     </div>
   );
 }

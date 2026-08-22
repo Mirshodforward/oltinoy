@@ -11,21 +11,26 @@ type Props = {
 };
 
 /**
- * Renders a product image variant via the custom loader, or a branded ivory
- * placeholder with the seam motif when no image exists (seed / pre-upload).
+ * A pre-generated image variant via the custom loader, or a branded cream
+ * placeholder (mark on a seam-ruled ground) when a product has no photo yet.
  */
 export function ProductImageView({ fileName, alt, priority, sizes, className = "" }: Props) {
   if (!fileName) {
     return (
       <div
-        className={`flex h-full w-full items-center justify-center ${className}`}
-        style={{ background: "var(--color-ivory-deep)" }}
-        aria-label={alt}
-        role="img"
+        className={`relative flex h-full w-full items-center justify-center overflow-hidden bg-cream ${className}`}
+        aria-label={alt || undefined}
+        role={alt ? "img" : undefined}
       >
-        <div className="text-center opacity-60">
-          <Logo height={36} className="mx-auto" />
-        </div>
+        <div
+          className="absolute inset-0 opacity-[0.45]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(135deg, var(--color-sand) 0 1px, transparent 1px 14px)",
+          }}
+          aria-hidden="true"
+        />
+        <Logo height={44} className="relative opacity-45" />
       </div>
     );
   }

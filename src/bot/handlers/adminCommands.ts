@@ -1,6 +1,6 @@
 import type { Context } from "grammy";
 import { db } from "@/lib/db";
-import { canManageBookings, isAdminChat, isAdminTelegramUser } from "@/lib/admin-telegram";
+import { isAdminChat, isAdminTelegramUser } from "@/lib/admin-telegram";
 
 async function buildStatsText(): Promise<string> {
   const startOfDay = new Date();
