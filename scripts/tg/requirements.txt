@@ -1,0 +1,2 @@
+telethon>=1.44
+cryptg>=0.5

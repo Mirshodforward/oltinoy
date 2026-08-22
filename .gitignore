@@ -44,3 +44,7 @@ next-env.d.ts
 /public/uploads/
 /uploads/
 /dist/
+
+# telethon userbot (scripts/tg)
+scripts/tg/.venv/
+scripts/tg/out/
