@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AlertCircle, CheckCircle, Minus, Plus, Telegram } from "@/components/ui/icons";
+import { track } from "@/lib/analytics/client";
 
 type Props = {
   productId: number;
@@ -113,6 +114,9 @@ export function BookingForm({ productId, sizes, minOrderQty, channelUrl }: Props
         return;
       }
       setState("success");
+      // The auto-captured click only says the button was pressed; this says the
+      // booking actually went through, which is the number the shop cares about.
+      track("bron_yuborildi", { productId, size, quantity });
     } catch {
       setState("error");
       setErrorMsg(t("errorGeneric"));

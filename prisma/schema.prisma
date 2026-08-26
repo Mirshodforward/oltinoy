@@ -126,3 +126,65 @@ model Setting {
   key   String @id
   value String @db.Text
 }
+
+// ───────────────────────────── Analitika ─────────────────────────────
+// Birinchi tomon (self-hosted) analitika: tashqi servis yo'q, cookie yo'q,
+// ma'lumot shu bazadan chiqmaydi. Sessiya GA bilan bir xil qoidada —
+// 30 daqiqa harakatsizlikdan keyin yangisi boshlanadi.
+
+model AnalyticsSession {
+  id          String   @id // mijoz tomonda yaratilgan uuid
+  visitorId   String // barqaror tashrifchi id (localStorage)
+  startedAt   DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+  durationSec Int      @default(0)
+  pageviews   Int      @default(0)
+  eventCount  Int      @default(0)
+
+  landingPath String
+  exitPath    String?
+
+  // Qayerdan kelgan
+  referrer    String?
+  refHost     String?
+  refType     String  @default("direct") // direct|search|social|telegram|referral
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmTerm     String?
+  utmContent  String?
+
+  // Kim
+  country    String?
+  device     String  @default("desktop") // mobile|tablet|desktop
+  os         String?
+  browser    String?
+  screenW    Int?
+  locale     String?
+  isTelegram Boolean @default(false)
+
+  events AnalyticsEvent[]
+
+  @@index([startedAt])
+  @@index([lastSeenAt])
+  @@index([visitorId, startedAt])
+  @@index([refType, startedAt])
+}
+
+model AnalyticsEvent {
+  id        Int              @id @default(autoincrement())
+  sessionId String
+  session   AnalyticsSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  kind      String // pageview|click|custom
+  name      String // pageview -> sahifa sarlavhasi; click -> tugma yorlig'i
+  path      String
+  productId Int?
+  meta      Json?
+  createdAt DateTime         @default(now())
+
+  @@index([createdAt])
+  @@index([kind, createdAt])
+  @@index([path, createdAt])
+  @@index([kind, name, createdAt])
+  @@index([sessionId])
+}

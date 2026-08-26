@@ -16,7 +16,8 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "gen:assets": "node scripts/gen-assets.mjs"
+    "gen:assets": "node scripts/gen-assets.mjs",
+    "admin:password": "node --env-file=.env scripts/set-admin-password.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

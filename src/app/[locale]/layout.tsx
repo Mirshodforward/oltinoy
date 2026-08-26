@@ -10,6 +10,7 @@ import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import { JsonLd, organizationSchema, websiteSchema } from "@/components/seo/JsonLd";
 import { SkipLink } from "@/components/ui/SkipLink";
+import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 import { getSettings } from "@/lib/settings";
 import { SITE_URL, BRAND } from "@/lib/seo";
 import { env } from "@/lib/env";
@@ -64,6 +65,7 @@ export default async function LocaleLayout({
             {children}
           </main>
           <Footer />
+          <AnalyticsTracker />
         </NextIntlClientProvider>
 
         {gaId ? (

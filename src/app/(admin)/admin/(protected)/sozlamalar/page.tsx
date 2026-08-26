@@ -1,5 +1,6 @@
 import { getSettings } from "@/lib/settings";
 import { SettingsForm } from "@/components/admin/SettingsForm";
+import { PasswordForm } from "@/components/admin/PasswordForm";
 
 export const dynamic = "force-dynamic";
 
@@ -17,8 +18,9 @@ export default async function AdminSettingsPage() {
       </header>
       <div className="seam mt-6" aria-hidden="true" />
 
-      <div className="mt-8">
+      <div className="mt-8 space-y-4">
         <SettingsForm values={settings} />
+        <PasswordForm />
       </div>
     </div>
   );

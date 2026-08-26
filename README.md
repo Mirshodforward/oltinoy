@@ -88,6 +88,52 @@ tar -xzf /var/backups/oltinoy/uploads-2026-01-01.tar.gz -C /var/www/oltinoy/
 - Nginx: `/var/log/nginx/access.log`, `/var/log/nginx/error.log`
 - Backup cron logi: `/var/log/oltinoy-backup.log`
 
+### Analitika
+
+Sayt o'z analitikasiga ega — GA/Vercel o'rniga birinchi tomon yechim. Ma'lumot
+shu bazadan chiqmaydi, cookie ishlatilmaydi, hodisalar soni cheklanmagan.
+Hisobot: **/admin/analitika** (Bugun / 7 / 30 / 90 kun).
+
+Nima yig'iladi: noyob tashrifchi, sessiya, sahifa ko'rishi, sessiya davomiyligi,
+bounce, manba (to'g'ridan-to'g'ri / qidiruv / ijtimoiy / Telegram / havola),
+referrer domeni, UTM, davlat, qurilma / OS / brauzer, til, kirish va chiqish
+sahifasi, hamda **har bir tugma bosishi**.
+
+Tugmalar avtomatik yoziladi — hech narsani belgilash shart emas. Yorliq
+tartibi: `data-track` → `aria-label` → tugmaning matni. Yozilishini
+istamagan element `data-track-ignore` oladi:
+
+```tsx
+<button data-track="Bron qilish — sticky">…</button>
+<button data-track-ignore>…</button>
+```
+
+Biznes hodisasi uchun `track()`:
+
+```tsx
+import { track } from "@/lib/analytics/client";
+track("bron_yuborildi", { productId, size, quantity });
+```
+
+Sozlash: `ANALYTICS_RETENTION_DAYS` (default `365`, `0` = cheksiz saqlash).
+"Davlatlar" hisoboti nginx GeoIP2 sarlavhasini talab qiladi — `deploy/nginx.conf`
+ichidagi izohga qarang; usiz hisobot bo'sh turadi, qolgani ishlaydi.
+
+Yozuvlar xotirada 2 soniyalik buferda to'planib, bitta `createMany` bilan
+yoziladi ([src/lib/analytics/ingest.ts](src/lib/analytics/ingest.ts)) — sahifa
+navigatsiyasi bazaga har safar so'rov yubormaydi. Admin paneli hech qachon
+o'lchanmaydi (`/admin` yo'llari kollektorda tashlab yuboriladi).
+
+### Admin parolini o'zgartirish
+
+Paneldan: **Sozlamalar → Kirish paroli** (joriy parol so'raladi).
+
+Panelga kira olmasangiz, server'dan:
+
+```bash
+npm run admin:password 'yangi-parol'   # yoki argumentsiz — kuchli parol o'ylab topadi
+```
+
 ### Yangi admin qo'shish
 
 Hozircha bitta admin roli bor (Auth.js credentials). Yangi admin qo'shish uchun droplet'da:
@@ -112,4 +158,5 @@ const db = new PrismaClient();
 - **PM2 loglar** — `pm2-logrotate` majburiy o'rnatilgan bo'lishi kerak (o'tgan hodisa: rotatsiyasiz loglar diskni to'ldirgan). `setup-server.md` §9 ga qarang.
 - **Slug'lar** — mahsulot/post e'lon qilingandan keyin slug o'zgartirilmasin (SEO). Admin forma buni ogohlantiradi.
 - **Rasm pipeline** — sharp orqali `lg`/`md`/`sm` variantlar avtomatik generatsiya qilinadi (`src/lib/images-server.ts`). Runtime'da qayta optimallashtirish yo'q — droplet CPU tejaladi.
+- **Analitika xom ma'lumoti** — `AnalyticsSession` / `AnalyticsEvent` jadvallari `ANALYTICS_RETENTION_DAYS` dan eskirganda avtomatik tozalanadi (sessiya o'chsa hodisalari cascade bilan ketadi). Backup hajmini shu belgilaydi.
 - **Bitta jarayon (webhook)** — web (`oltinoy`) ham saytni beradi, ham Telegram update'larini (`/start`, callback) `POST /api/telegram` orqali qabul qiladi. Alohida bot jarayoni yo'q. Lokal dev'da esa polling ishlatiladi (`npm run dev:bot`, [src/bot/index.ts](src/bot/index.ts)).

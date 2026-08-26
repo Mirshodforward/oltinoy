@@ -16,6 +16,8 @@ const serverSchema = z.object({
   ADMIN_USERNAME: z.string().min(1),
   ADMIN_INITIAL_PASSWORD: z.string().min(6),
   UPLOAD_DIR: z.string().min(1),
+  // Analitika tarixini necha kun saqlash (0 = cheksiz).
+  ANALYTICS_RETENTION_DAYS: z.coerce.number().int().min(0).max(3650).optional().default(365),
   GOOGLE_SITE_VERIFICATION: z.string().optional().default(""),
   YANDEX_VERIFICATION: z.string().optional().default(""),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

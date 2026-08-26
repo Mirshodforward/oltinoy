@@ -11,6 +11,7 @@ import {
   PenLine,
   Megaphone,
   Settings,
+  TrendingUp,
   type IconProps,
 } from "@/components/ui/icons";
 
@@ -25,6 +26,7 @@ const ITEMS: Item[] = [
   { href: "/admin", label: "Boshqaruv paneli", icon: Dashboard, exact: true },
   { href: "/admin/mahsulotlar", label: "Mahsulotlar", icon: Bag },
   { href: "/admin/bronlar", label: "Bronlar", icon: Inbox },
+  { href: "/admin/analitika", label: "Analitika", icon: TrendingUp },
   { href: "/admin/kategoriyalar", label: "Kategoriyalar", icon: Folder },
   { href: "/admin/postlar", label: "Blog postlar", icon: PenLine },
   { href: "/admin/broadcast", label: "Broadcast", icon: Megaphone },
