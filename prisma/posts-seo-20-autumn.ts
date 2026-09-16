@@ -1011,7 +1011,7 @@ Kichik hajmda mumkin, lekin katta sexlar va tashish xizmatlari hujjat so'raydi.
 **Qaysi soliq rejimi qulay?**
 Aylanma hajmiga bog'liq — buxgalter bilan tanlang.
 
-*Oltinoy Collection optomchilar bilan ishlaydi. Shartlar: [biz haqimizda](/biz-haqimizda) · [aloqa](/aloqa).*`,
+*Oltinoy Collection optomchilar bilan ishlaydi. [Katalog](/katalog) · [biz haqimizda](/biz-haqimizda) · [aloqa](/aloqa).*`,
     contentRu: `Многие, кто начинает торговать одеждой, откладывают этот вопрос: «пока мелко, потом посмотрю». На практике регистрация оказывается шагом, который открывает рост.
 
 > Ниже — общее объяснение. Конкретные требования и налоговые ставки со временем меняются: перед решением уточните в официальных источниках или у бухгалтера.
@@ -1057,7 +1057,7 @@ Aylanma hajmiga bog'liq — buxgalter bilan tanlang.
 **Какой налоговый режим удобнее?**
 Зависит от оборота — выбирайте с бухгалтером.
 
-*Oltinoy Collection работает с оптовиками. Условия: [о нас](/ru/biz-haqimizda) · [контакты](/ru/aloqa).*`,
+*Oltinoy Collection работает с оптовиками. [Каталог](/ru/katalog) · [о нас](/ru/biz-haqimizda) · [контакты](/ru/aloqa).*`,
   },
   {
     slug: "uyda-otirib-kiyim-sotish-onalar-uchun",
