@@ -6,6 +6,8 @@
  * shuning uchun bir xil kadrlash butun katalogni tekis ko'rsatadi.
  *
  *   node scripts/tg/process-images.mjs
+ *   node scripts/tg/process-images.mjs --catalog out/sep/catalog.json \
+ *        --pics out/sep/pics --out out/sep/variants --manifest out/sep/manifest.json
  */
 import sharp from "sharp";
 import { randomBytes } from "node:crypto";
@@ -14,9 +16,16 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const OUT = join(HERE, "out/variants");
-const CATALOG = join(HERE, "out/catalog.json");
-const PICS = join(HERE, "out/pics");
+
+/** `--flag value` juftliklari; berilmagani eski standart yo'lda qoladi. */
+function arg(name, fallback) {
+  const i = process.argv.indexOf(`--${name}`);
+  return join(HERE, i > -1 && process.argv[i + 1] ? process.argv[i + 1] : fallback);
+}
+const CATALOG = arg("catalog", "out/catalog.json");
+const PICS = arg("pics", "out/pics");
+const OUT = arg("out", "out/variants");
+const MANIFEST = arg("manifest", "out/manifest.json");
 const VARIANT_WIDTH = { sm: 384, md: 768, lg: 1280 };
 
 mkdirSync(OUT, { recursive: true });
@@ -55,8 +64,8 @@ for (const p of catalog.products) {
     manifest[p.slug].push({ fileName, width: framed.info.width, height: framed.info.height, sourceId: id });
     done++;
   }
-  process.stdout.write(`\r${p.rank}/30 — ${done} rasm`);
+  process.stdout.write(`\r${catalog.products.indexOf(p) + 1}/${catalog.products.length} — ${done} rasm`);
 }
 
-writeFileSync(join(HERE, "out/manifest.json"), JSON.stringify(manifest, null, 2));
+writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2));
 console.log(`\n✅ ${done} rasm × 5 variant -> ${OUT}`);

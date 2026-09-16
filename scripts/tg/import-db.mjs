@@ -28,6 +28,9 @@ for (const p of catalog.products) {
       materialUz: p.materialUz, materialRu: p.materialRu,
       price: p.price, oldPrice: p.oldPrice, sizes: p.sizes,
       minOrderQty: p.minOrderQty, categoryId, isNew: p.isNew, status: "ACTIVE",
+      // Qaysi kanal postlaridan kelganini saqlaymiz — qayta import va
+      // "bu model allaqachon saytdami?" savoli shu maydon orqali hal bo'ladi.
+      tgMessageIds: p.tgMessageIds ?? [],
     },
     create: {
       slug: p.slug, sku: p.sku, nameUz: p.nameUz, nameRu: p.nameRu,
@@ -35,6 +38,7 @@ for (const p of catalog.products) {
       materialUz: p.materialUz, materialRu: p.materialRu,
       price: p.price, oldPrice: p.oldPrice, sizes: p.sizes,
       minOrderQty: p.minOrderQty, categoryId, isNew: p.isNew, status: "ACTIVE",
+      tgMessageIds: p.tgMessageIds ?? [],
     },
   });
 

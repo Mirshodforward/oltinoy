@@ -1,0 +1,232 @@
+{
+  "batch": "2026-09",
+  "note": "26-avgust – 16-sentabr oralig'ida kanalga chiqqan yangi modellar. Nom, rang va kadr tanlovi rasmlarga qarab qo'lda yozilgan; narx, mato va razmer kanal sarlavhasidan olinadi.",
+  "skuStart": 31,
+  "source": "scripts/tg/out/sep/products.json",
+  "skipped": [
+    {
+      "groups": [
+        5
+      ],
+      "reason": "Adidas logotipi va uch chiziq — savdo belgisi buzilishi. Ochiq saytda mahsulot sifatida e'lon qilinmaydi."
+    }
+  ],
+  "products": [
+    {
+      "groups": [
+        1
+      ],
+      "category": "toplam",
+      "nameUz": "Kontrast yoqali gulli dvoyka",
+      "nameRu": "Двойка в цветочек с контрастной кокеткой",
+      "colorUz": "xantal va bordo",
+      "colorRu": "горчичный и бордовый",
+      "materialUz": "Pandora trikotaji",
+      "materialRu": "Трикотаж «Пандора»",
+      "images": [
+        15543,
+        15542,
+        15540,
+        15539
+      ]
+    },
+    {
+      "groups": [
+        2
+      ],
+      "category": "abaya",
+      "nameUz": "Toshli yengli Dubay shoyi abaya",
+      "nameRu": "Абайя из дубайского шёлка с камнями на рукавах",
+      "colorUz": "tuya rang, kulrang, shokolad va bordo",
+      "colorRu": "верблюжий, серый, шоколадный и бордовый",
+      "materialUz": "Dubay shoyisi",
+      "materialRu": "Дубайский шёлк",
+      "images": [
+        15522,
+        15521,
+        15519,
+        15517,
+        15515
+      ]
+    },
+    {
+      "groups": [
+        3
+      ],
+      "category": "toplam",
+      "nameUz": "Shifon jiletli troyka",
+      "nameRu": "Тройка с шифоновым жилетом",
+      "colorUz": "bordo, oq va qora",
+      "colorRu": "бордовый, белый и чёрный",
+      "materialUz": "Barbi matosi",
+      "materialRu": "Ткань «Барби»",
+      "images": [
+        15480,
+        15476,
+        15472,
+        15479
+      ]
+    },
+    {
+      "groups": [
+        4
+      ],
+      "category": "abaya",
+      "nameUz": "Ichki belbog'li toshli abaya",
+      "nameRu": "Абайя с внутренним поясом и камнями",
+      "colorUz": "zaytun, sut, kulrang va shokolad",
+      "colorRu": "оливковый, молочный, серый и шоколадный",
+      "materialUz": "Dubay shoyisi",
+      "materialRu": "Дубайский шёлк",
+      "sizes": [
+        "48",
+        "50",
+        "52",
+        "54",
+        "56"
+      ],
+      "images": [
+        15497,
+        15496,
+        15495,
+        15494
+      ]
+    },
+    {
+      "groups": [
+        6
+      ],
+      "category": "abaya",
+      "nameUz": "Kashtali Dubay shoyi abaya",
+      "nameRu": "Абайя из дубайского шёлка с вышивкой",
+      "colorUz": "bej, tuya rang va shokolad",
+      "colorRu": "бежевый, верблюжий и шоколадный",
+      "materialUz": "Dubay shoyisi",
+      "materialRu": "Дубайский шёлк",
+      "sizes": [
+        "48",
+        "50",
+        "52",
+        "54",
+        "56"
+      ],
+      "images": [
+        15461,
+        15460,
+        15459,
+        15463
+      ]
+    },
+    {
+      "groups": [
+        7
+      ],
+      "category": "toplam",
+      "nameUz": "Payetkali dvoyka",
+      "nameRu": "Двойка с пайетками",
+      "colorUz": "bej va qora",
+      "colorRu": "бежевый и чёрный",
+      "materialUz": "Turk paxtasi (XB), setka bezakli",
+      "materialRu": "Турецкий хлопок с сеткой",
+      "images": [
+        15439,
+        15438,
+        15435,
+        15434
+      ]
+    },
+    {
+      "groups": [
+        8,
+        9,
+        10
+      ],
+      "category": "toplam",
+      "nameUz": "Yunon naqshli troyka",
+      "nameRu": "Тройка с греческим орнаментом",
+      "colorUz": "qora, jigarrang va olxo'ri",
+      "colorRu": "чёрный, коричневый и сливовый",
+      "materialUz": "Turk paxtasi (XB)",
+      "materialRu": "Турецкий хлопок",
+      "images": [
+        15420,
+        15417,
+        15414,
+        15412
+      ]
+    },
+    {
+      "groups": [
+        11
+      ],
+      "category": "toplam",
+      "nameUz": "Adras yoqali oq dvoyka",
+      "nameRu": "Белая двойка с кокеткой адрас",
+      "colorUz": "sut, ko'k va yashil naqshli",
+      "colorRu": "молочный с синим и зелёным узором",
+      "materialUz": "Singapur (nafas oladigan)",
+      "materialRu": "Сингапур (дышащая)",
+      "images": [
+        15410,
+        15409,
+        15408,
+        15407
+      ]
+    },
+    {
+      "groups": [
+        12
+      ],
+      "category": "toplam",
+      "nameUz": "Gulli ko'ylak va ro'mol to'plami",
+      "nameRu": "Комплект: платье в цветочек и платок",
+      "colorUz": "sut va jigarrang",
+      "colorRu": "молочный и коричневый",
+      "materialUz": "Gulli qismi PRADO, yengi XB lion",
+      "materialRu": "Цветочная часть PRADO, рукава XB lion",
+      "price": 89000,
+      "oldPrice": 140000,
+      "images": [
+        15404,
+        15403,
+        15402
+      ]
+    },
+    {
+      "groups": [
+        13
+      ],
+      "category": "toplam",
+      "nameUz": "Qaytarma yoqali gulli dvoyka",
+      "nameRu": "Двойка в цветочек с отложным воротником",
+      "colorUz": "xantal va bordo",
+      "colorRu": "горчичный и бордовый",
+      "materialUz": "Markiza (XB)",
+      "materialRu": "Маркиза (хлопок)",
+      "images": [
+        15375,
+        15373,
+        15372,
+        15371
+      ]
+    },
+    {
+      "groups": [
+        14
+      ],
+      "category": "abaya",
+      "nameUz": "Toshli arganza abaya",
+      "nameRu": "Абайя из органзы с камнями",
+      "colorUz": "tilla, kulrang va qora",
+      "colorRu": "золотой, серый и чёрный",
+      "materialUz": "Arganza, baza ko'ylak: lion XB",
+      "materialRu": "Органза, базовое платье: lion XB",
+      "images": [
+        15363,
+        15361,
+        15356,
+        15365
+      ]
+    }
+  ]
+}
