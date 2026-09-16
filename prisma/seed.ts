@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { slugify } from "../src/lib/slug";
 import { POSTS_SEO_20 } from "./posts-seo-20";
 import { POSTS_SEO_20_REST } from "./posts-seo-20-rest";
+import { POSTS_SEO_20_AUTUMN } from "./posts-seo-20-autumn";
 
 const db = new PrismaClient();
 
@@ -932,6 +933,7 @@ Yo'q, lekin ulushini kamaytiring: qishda zichroq matolar (PRADO tipidagi) va ast
   },
   ...POSTS_SEO_20,
   ...POSTS_SEO_20_REST,
+  ...POSTS_SEO_20_AUTUMN,
 ];
 
 async function main() {

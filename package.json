@@ -17,7 +17,8 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "gen:assets": "node scripts/gen-assets.mjs",
-    "admin:password": "node --env-file=.env scripts/set-admin-password.mjs"
+    "admin:password": "node --env-file=.env scripts/set-admin-password.mjs",
+    "posts:import": "tsx --env-file=.env scripts/import-posts.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
