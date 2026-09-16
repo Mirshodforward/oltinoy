@@ -2,6 +2,13 @@ import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { SITE_URL } from "@/lib/seo";
 
+/**
+ * The catalogue changes between deploys — a new batch of products is imported
+ * straight into the database — so this must not be frozen at build time, or
+ * search engines keep being handed the catalogue as it stood on release day.
+ */
+export const revalidate = 3600;
+
 function entry(path: string, lastModified?: Date, priority = 0.7): MetadataRoute.Sitemap[number] {
   const uz = path === "/" ? SITE_URL : `${SITE_URL}${path}`;
   const ru = path === "/" ? `${SITE_URL}/ru` : `${SITE_URL}/ru${path}`;
